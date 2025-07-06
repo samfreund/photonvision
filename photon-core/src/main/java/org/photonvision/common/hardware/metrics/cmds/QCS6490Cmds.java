@@ -24,7 +24,14 @@ public class QCS6490Cmds extends LinuxCmds {
     public void initCmds(HardwareConfig config) {
         super.initCmds(config);
 
-        // TODO: temperature. We can get thermal zones, we just gotta figure out what's what.
+        // To get thermal zones, run the following snippet on a Rubik Pi 3
+        /**
+         * for zone in /sys/class/thermal/thermal_zone*; do echo "=== $(basename $zone) ===" echo "Type:
+         * $(cat $zone/type 2>/dev/null || echo 'N/A')" echo "Temp: $(cat $zone/temp 2>/dev/null || echo
+         * 'N/A')" echo "Policy: $(cat $zone/policy 2>/dev/null || echo 'N/A')" echo done
+         */
+        cpuTemperatureCommand =
+                "cat /sys/class/thermal/thermal_zone10/temp | awk '{printf \"%.1f\", $1/1000}'";
         // TODO: NPU usage, we might be able to get it from the debug section in /sys/ but we're waiting
         // on the ubuntu image for that.
     }
