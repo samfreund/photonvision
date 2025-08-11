@@ -19,6 +19,8 @@ package org.photonvision.vision.pipeline;
 
 import java.util.List;
 import java.util.Optional;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 import org.photonvision.common.configuration.NeuralNetworkModelManager;
 import org.photonvision.vision.frame.Frame;
 import org.photonvision.vision.frame.FrameThresholdType;
@@ -113,7 +115,19 @@ public class ObjectDetectionPipeline
 
         var names = objectDetectorPipe.getClassNames();
 
-        frame.colorImage.getMat().copyTo(frame.processedImage.getMat());
+        // Avoid unconditional full-frame copy; only copy when an output image is expected
+        if (!frame.processedImage.getMat().empty()) {
+            Mat inMat = frame.colorImage.getMat();
+            Mat outMat = frame.processedImage.getMat();
+
+            if (!inMat.empty()) {
+                if (!outMat.size().equals(inMat.size())) {
+                    Imgproc.resize(inMat, outMat, outMat.size());
+                } else {
+                    inMat.copyTo(outMat);
+                }
+            }
+        }
 
         var filterContoursResult = filterContoursPipe.run(neuralNetworkResult.output);
         sumPipeNanosElapsed += filterContoursResult.nanosElapsed;
