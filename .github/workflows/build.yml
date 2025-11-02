@@ -71,6 +71,16 @@ jobs:
           fetch-depth: 0
       - name: Fetch tags
         run: git fetch --tags --force
+      - name: Debug git state
+        run: |
+          echo "Current commit:"
+          git rev-parse HEAD
+          echo "All tags:"
+          git tag -l
+          echo "Describe output:"
+          git describe --tags --match=v* || echo "Describe failed"
+          echo "Git log:"
+          git log --oneline -10
       - name: Install Java 17
         uses: actions/setup-java@v4
         with:
