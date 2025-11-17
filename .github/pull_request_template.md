@@ -14,6 +14,6 @@ Merge checklist:
 - [ ] This PR has been [linted](https://docs.photonvision.org/en/latest/docs/contributing/linting.html).
 - [ ] If this PR changes behavior or adds a feature, user documentation is updated
 - [ ] If this PR touches photon-serde, all messages have been regenerated and hashes have not changed unexpectedly
-- [ ] If this PR touches configuration, this is backwards compatible with settings back to v2025.3.2
+- [ ] If this PR touches configuration, this is backwards compatible with settings back to v2026.1.1-beta-1
 - [ ] If this PR touches pipeline settings or anything related to data exchange, the frontend typing is updated
 - [ ] If this PR addresses a bug, a regression test for it is added
