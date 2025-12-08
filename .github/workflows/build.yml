@@ -2,8 +2,13 @@ name: Build
 
 on:
   # Run on pushes to main and pushed tags, and on pull requests against main, but ignore the docs folder
-  push:
+  push: 
+    branches:
+      - main
+    tags:
+      - 'v*'
   pull_request:
+  merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
