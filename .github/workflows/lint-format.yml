@@ -51,6 +51,31 @@ jobs:
           name: wpiformat fixes
           path: wpiformat-fixes.patch
         if: ${{ failure() }}
+  docs:
+    name: "Documentation Linting"
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Fetch all history and metadata
+        run: |
+          git fetch --prune --unshallow
+          git checkout -b pr
+          git branch -f main origin/main
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+      - name: Install wpiformat
+        run: pip3 install doc8 
+      - name: Check output
+        run: |
+          set +e
+          doc8 docs 
+          exit_code=$?
+          if test "$exit_code" -ne "0"; then
+            echo "::error ::Linting failed. See https://docs.photonvision.org/en/latest/docs/contributing/linting.html"
+            exit $exit_code
+          fi
   javaformat:
     name: "Java Formatting"
     needs: [validation]
