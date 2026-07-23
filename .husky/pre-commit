@@ -1,0 +1,1 @@
+pnpm -C photon-client exec lint-staged --config ../lint-staged.config.mjs
