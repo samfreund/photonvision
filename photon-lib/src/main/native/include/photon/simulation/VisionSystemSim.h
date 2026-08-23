@@ -34,8 +34,8 @@
 #include <wpi/math/interpolation/TimeInterpolatableBuffer.hpp>
 #include <wpi/smartdashboard/Field2d.hpp>
 #include <wpi/smartdashboard/FieldObject2d.hpp>
-#include <wpi/smartdashboard/SmartDashboard.hpp>
 #include <wpi/system/Timer.hpp>
+#include <wpi/telemetry/Telemetry.hpp>
 
 #include "photon/simulation/PhotonCameraSim.h"
 
@@ -61,8 +61,7 @@ class VisionSystemSim {
    * NetworkTables.
    */
   explicit VisionSystemSim(std::string visionSystemName) {
-    std::string tableName = "VisionSystemSim-" + visionSystemName;
-    wpi::SmartDashboard::PutData(tableName + "/Sim Field", &dbgField);
+    tableName = "VisionSystemSim-" + visionSystemName;
   }
 
   /** Get one of the simulated cameras. */
@@ -477,9 +476,12 @@ class VisionSystemSim {
     if (cameraPoses2d.size() != 0) {
       dbgField.GetObject("cameras")->SetPoses(cameraPoses2d);
     }
+
+    wpi::telemetry::Log(tableName + "/Sim Field", dbgField);
   }
 
  private:
+  std::string tableName;
   std::unordered_map<std::string, PhotonCameraSim*> camSimMap{};
   static constexpr wpi::units::second_t bufferLength{1.5_s};
   std::unordered_map<PhotonCameraSim*,

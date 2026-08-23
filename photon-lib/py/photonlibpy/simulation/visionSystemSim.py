@@ -1,5 +1,6 @@
 import typing
 
+import telemetry
 import wpilib
 from robotpy_fields import Field
 from wpilib import Field2d
@@ -43,7 +44,6 @@ class VisionSystemSim:
         self.targetSets: typing.Dict[str, list[VisionTargetSim]] = {}
 
         self.tableName: str = "VisionSystemSim-" + visionSystemName
-        wpilib.SmartDashboard.put_data(self.tableName + "/Sim Field", self.dbgField)
 
     def getCameraSim(self, name: str) -> PhotonCameraSim | None:
         """Get one of the simulated cameras."""
@@ -337,3 +337,6 @@ class VisionSystemSim:
 
         if len(cameraPoses2d) != 0:
             self.dbgField.get_object("cameras").set_poses(cameraPoses2d)
+
+        # publish the field state to telemetry
+        telemetry.log(self.tableName + "/Sim Field", self.dbgField)

@@ -36,6 +36,7 @@ import org.photonvision.common.dataflow.networktables.NetworkTablesManager;
 import org.photonvision.common.util.TestUtils;
 import org.photonvision.jni.LibraryLoader;
 import org.photonvision.vision.frame.provider.FileFrameProvider;
+import org.wpilib.backend.NetworkTablesTelemetryBackend;
 import org.wpilib.driverstation.MatchType;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.hardware.hal.HAL;
@@ -43,7 +44,7 @@ import org.wpilib.networktables.NetworkTable;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.simulation.DriverStationSim;
 import org.wpilib.simulation.SimHooks;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.TelemetryRegistry;
 
 public class FileSaveFrameConsumerTest {
     NetworkTableInstance inst = null;
@@ -69,7 +70,7 @@ public class FileSaveFrameConsumerTest {
         inst.stopClient();
         inst.stopServer();
         inst.startLocal();
-        SmartDashboard.setNetworkTableInstance(inst);
+        TelemetryRegistry.registerBackend("", new NetworkTablesTelemetryBackend(inst, "/Telemetry"));
 
         // DriverStation uses the default instance internally
         assertEquals(NetworkTableInstance.getDefault(), inst);
@@ -77,6 +78,8 @@ public class FileSaveFrameConsumerTest {
 
     @AfterEach
     public void teardown() {
+        TelemetryRegistry.reset();
+
         SimHooks.resumeTiming();
 
         HAL.shutdown();

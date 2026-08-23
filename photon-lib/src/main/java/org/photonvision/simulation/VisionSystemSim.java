@@ -41,8 +41,8 @@ import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Transform3d;
 import org.wpilib.math.interpolation.TimeInterpolatableBuffer;
 import org.wpilib.smartdashboard.Field2d;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.system.Timer;
+import org.wpilib.telemetry.Telemetry;
 
 /**
  * A simulated vision system involving a camera(s) and coprocessor(s) mounted on a mobile robot
@@ -65,6 +65,8 @@ public class VisionSystemSim {
 
     private final Field2d dbgField;
 
+    private final String tableName;
+
     private final Transform3d kEmptyTrf = new Transform3d();
 
     /**
@@ -78,8 +80,7 @@ public class VisionSystemSim {
      */
     public VisionSystemSim(String visionSystemName) {
         dbgField = new Field2d();
-        String tableName = "VisionSystemSim-" + visionSystemName;
-        SmartDashboard.putData(tableName + "/Sim Field", dbgField);
+        tableName = "VisionSystemSim-" + visionSystemName;
     }
 
     /** Get one of the simulated cameras. */
@@ -400,7 +401,11 @@ public class VisionSystemSim {
                                 .getObject(entry.getKey())
                                 .setPoses(entry.getValue().stream().map(t -> t.getPose().toPose2d()).toList()));
 
-        if (robotPoseMeters == null) return;
+        if (robotPoseMeters == null) {
+            // publish the field state to telemetry
+            Telemetry.log(tableName + "/Sim Field", dbgField);
+            return;
+        }
 
         // save "real" robot poses over time
         double now = Timer.getMonotonicTimestamp();
@@ -443,5 +448,8 @@ public class VisionSystemSim {
         }
         if (processed) dbgField.getObject("visibleTargetPoses").setPoses(visTgtPoses2d);
         if (!cameraPoses2d.isEmpty()) dbgField.getObject("cameras").setPoses(cameraPoses2d);
+
+        // publish the field state to telemetry
+        Telemetry.log(tableName + "/Sim Field", dbgField);
     }
 }

@@ -53,15 +53,16 @@ import org.photonvision.jni.TimeSyncClient;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.targeting.PhotonPipelineMetadata;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.wpilib.backend.NetworkTablesTelemetryBackend;
 import org.wpilib.hardware.hal.HAL;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.NetworkTablesJNI;
 import org.wpilib.simulation.AlertSim;
 import org.wpilib.simulation.SimHooks;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.system.DataLogManager;
 import org.wpilib.system.Timer;
+import org.wpilib.telemetry.TelemetryRegistry;
 import org.wpilib.util.runtime.RuntimeLoader;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -86,11 +87,13 @@ class PhotonCameraTest {
         inst.stopClient();
         inst.stopServer();
         inst.startLocal();
-        SmartDashboard.setNetworkTableInstance(inst);
+        TelemetryRegistry.registerBackend("", new NetworkTablesTelemetryBackend(inst, "/Telemetry"));
     }
 
     @AfterEach
     public void teardown() {
+        TelemetryRegistry.reset();
+
         inst.close();
         inst = null;
 

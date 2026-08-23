@@ -54,7 +54,7 @@ import org.photonvision.PhotonCamera;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
 
 public class Robot extends TimedRobot {
     PhotonCamera camera;
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
                         var t3 = result.getTimestampSeconds();
                         var t1p5 = (t1 + t2) / 2;
                         var error = t3-t1p5;
-                        SmartDashboard.putNumber("blink_error_ms", error * 1000);
+                        Telemetry.log("blink_error_ms", error * 1000);
                         return;
                     }
                 }

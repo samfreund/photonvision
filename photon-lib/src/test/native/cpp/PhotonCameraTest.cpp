@@ -33,7 +33,6 @@
 #include <wpi/hal/HAL.h>
 #include <wpi/nt/NetworkTableInstance.hpp>
 #include <wpi/simulation/AlertSim.hpp>
-#include <wpi/smartdashboard/SmartDashboard.hpp>
 
 TEST_CASE("TimeSyncProtocolTest Smoketest", "[timesync]") {
   using namespace wpi::tsp;
@@ -65,8 +64,6 @@ TEST_CASE("PhotonCameraTest Alerts", "[photonlib]") {
   inst.StopClient();
   inst.StopServer();
   inst.StartLocal();
-  // (We can't create our own instance, SmartDashboard will always use the
-  // default)
 
   const std::string cameraName = "foobar";
 

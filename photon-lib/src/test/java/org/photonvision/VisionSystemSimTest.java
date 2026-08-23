@@ -49,6 +49,7 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.simulation.VisionTargetSim;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.wpilib.backend.NetworkTablesTelemetryBackend;
 import org.wpilib.fields.Field;
 import org.wpilib.fields.FieldTag;
 import org.wpilib.hardware.hal.HAL;
@@ -61,7 +62,7 @@ import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Translation3d;
 import org.wpilib.math.util.Units;
 import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.TelemetryRegistry;
 import org.wpilib.util.runtime.RuntimeLoader;
 import org.wpilib.vision.camera.OpenCvLoader;
 
@@ -86,11 +87,13 @@ class VisionSystemSimTest {
         inst.stopClient();
         inst.stopServer();
         inst.startLocal();
-        SmartDashboard.setNetworkTableInstance(inst);
+        TelemetryRegistry.registerBackend("", new NetworkTablesTelemetryBackend(inst, "/Telemetry"));
     }
 
     @AfterEach
     public void teardown() {
+        TelemetryRegistry.reset();
+
         inst.close();
         inst = null;
 

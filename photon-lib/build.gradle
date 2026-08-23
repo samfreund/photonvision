@@ -52,6 +52,8 @@ model {
             }
 
             nativeUtils.useRequiredLibrary(it, "wpilib_shared")
+            nativeUtils.useRequiredLibrary(it, "telemetry_shared")
+            nativeUtils.useRequiredLibrary(it, "tunables_shared")
             nativeUtils.useRequiredLibrary(it, "apriltag_shared")
             nativeUtils.useRequiredLibrary(it, "fields_shared")
             nativeUtils.useRequiredLibrary(it, "opencv_shared")
@@ -91,6 +93,8 @@ model {
             }
 
             nativeUtils.useRequiredLibrary(it, "datalog_shared")
+            nativeUtils.useRequiredLibrary(it, "telemetry_shared")
+            nativeUtils.useRequiredLibrary(it, "tunables_shared")
             nativeUtils.useRequiredLibrary(it, "cscore_shared")
             nativeUtils.useRequiredLibrary(it, "cameraserver_shared")
             nativeUtils.useRequiredLibrary(it, "wpilib_shared")

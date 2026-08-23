@@ -44,7 +44,6 @@ import org.wpilib.networktables.NetworkTableEvent;
 import org.wpilib.networktables.NetworkTableEvent.Kind;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.StringSubscriber;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.util.Alert;
 import org.wpilib.util.Alert.Level;
 import org.wpilib.vision.camera.CameraServerJNI;
@@ -120,7 +119,6 @@ public class NetworkTablesManager {
         if (mismatchAlert != null) {
             mismatchAlert.set(on);
             mismatchAlert.setText(message);
-            SmartDashboard.updateValues();
         }
     }
 
@@ -329,7 +327,6 @@ public class NetworkTablesManager {
             conflictAlert.setText("Camera name conflict detected: " + conflictingCameras + "!");
         }
         conflictAlert.set(conflictingHostname || !conflictingCameras.isEmpty());
-        SmartDashboard.updateValues();
         this.conflictingHostname = conflictingHostname;
         this.conflictingCameras = conflictingCameras.toString();
     }
