@@ -60,7 +60,6 @@ model {
             nativeUtils.useRequiredLibrary(it, "apriltag_shared")
             nativeUtils.useRequiredLibrary(it, "fields_shared")
             nativeUtils.useRequiredLibrary(it, "opencv_shared")
-            nativeUtils.useRequiredLibrary(it, "mrclib_shared")
         }
         "${nativeName}JNI"(JniNativeLibrarySpec) {
 
@@ -89,7 +88,6 @@ model {
             nativeUtils.useRequiredLibrary(it, "ntcore_shared")
             nativeUtils.useRequiredLibrary(it, "cscore_shared")
             nativeUtils.useRequiredLibrary(it, "opencv_shared")
-            nativeUtils.useRequiredLibrary(it, "mrclib_shared")
         }
     }
     testSuites {
@@ -127,7 +125,6 @@ model {
             nativeUtils.useRequiredLibrary(it, "fields_shared")
             nativeUtils.useRequiredLibrary(it, "cscore_shared")
             nativeUtils.useRequiredLibrary(it, "opencv_shared")
-            nativeUtils.useRequiredLibrary(it, "mrclib_shared")
         }
     }
 
@@ -203,4 +200,3 @@ nativeConfig.dependencies.add wpilibTools.deps.wpilib("apriltag")
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("fields")
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("telemetry")
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("tunables")
-nativeConfig.dependencies.add wpilibTools.deps.wpilib("mrclib", mrclibVersion)
