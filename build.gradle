@@ -22,7 +22,6 @@ allprojects {
         maven { url = "https://maven.photonvision.org/releases" }
         maven { url = "https://maven.photonvision.org/snapshots" }
     }
-    wpilibRepositories.use2027Repos()
     wpilibRepositories.addAllReleaseRepositories(it)
     wpilibRepositories.addAllDevelopmentRepositories(it)
 }
@@ -31,8 +30,8 @@ ext.localMavenURL = file("$project.buildDir/outputs/maven")
 ext.allOutputsFolder = file("$project.buildDir/outputs")
 
 ext {
-    wpilibVersion = "2027.0.0-alpha-6-358-gf90dfe8f4"
-    mrclibVersion = "2027.1.0-alpha-1-91-gb154ee9"
+    wpilibVersion = "2027.0.0-alpha-6-365-g207d8ad36"
+    mrclibVersion = "2027.1.0-alpha-1-112-g3f8f56e"
     openCVversion = "2027-4.13.0-3"
     ejmlVersion = "0.46.0";
     avajeJsonbVersion = "3.14";
