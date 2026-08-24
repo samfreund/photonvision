@@ -291,7 +291,7 @@ PhotonPipelineResult PhotonCameraSim::Process(
     videoSimRaw.PutFrame(videoSimFrameRaw);
   } else {
     videoSimRaw.SetConnectionStrategy(
-        wpi::cs::VideoSource::ConnectionStrategy::kConnectionForceClose);
+        wpi::cs::VideoSource::ConnectionStrategy::CONNECTION_FORCE_CLOSE);
   }
 
   if (videoSimProcEnabled) {
@@ -336,7 +336,7 @@ PhotonPipelineResult PhotonCameraSim::Process(
     videoSimProcessed.PutFrame(videoSimFrameProcessed);
   } else {
     videoSimProcessed.SetConnectionStrategy(
-        wpi::cs::VideoSource::ConnectionStrategy::kConnectionForceClose);
+        wpi::cs::VideoSource::ConnectionStrategy::CONNECTION_FORCE_CLOSE);
   }
 
   std::optional<MultiTargetPNPResult> multiTagResults = std::nullopt;

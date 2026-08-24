@@ -343,7 +343,7 @@ public class GenericUSBCameraSettables extends VisionSourceSettables {
      */
     protected void softSet(String property, int value) {
         VideoProperty prop = camera.getProperty(property);
-        if (prop.getKind() == VideoProperty.Kind.kNone) {
+        if (prop.getKind() == VideoProperty.Kind.NONE) {
             logger.debug("No property " + property + " for " + camera.getName() + " , skipping.");
         } else {
             try {
@@ -366,7 +366,7 @@ public class GenericUSBCameraSettables extends VisionSourceSettables {
         boolean found = false;
         for (var option : options) {
             retProp = camera.getProperty(option);
-            if (retProp.getKind() != VideoProperty.Kind.kNone) {
+            if (retProp.getKind() != VideoProperty.Kind.NONE) {
                 // got em
                 found = true;
                 break;

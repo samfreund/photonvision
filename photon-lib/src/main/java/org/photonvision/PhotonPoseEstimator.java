@@ -391,7 +391,7 @@ public class PhotonPoseEstimator {
                         headingBuffer.getSample(cameraResult.getTimestampSeconds()).get(),
                         headingScaleFactor);
         if (!pnpResult.isPresent()) return Optional.empty();
-        var best = Pose3d.kZero.plus(pnpResult.get().best); // field-to-robot
+        var best = Pose3d.ZERO.plus(pnpResult.get().best); // field-to-robot
 
         return Optional.of(
                 new EstimatedRobotPose(
@@ -418,7 +418,7 @@ public class PhotonPoseEstimator {
 
         var best_tf = cameraResult.getMultiTagResult().get().estimatedPose.best;
         var best =
-                Pose3d.kZero
+                Pose3d.ZERO
                         .plus(best_tf) // field-to-camera
                         .relativeTo(fieldTags.getOrigin())
                         .plus(robotToCamera.inverse()); // field-to-robot
@@ -453,7 +453,7 @@ public class PhotonPoseEstimator {
         if (!pnpResult.isPresent()) return Optional.empty();
 
         var best =
-                Pose3d.kZero
+                Pose3d.ZERO
                         .plus(pnpResult.get().best) // field-to-camera
                         .plus(robotToCamera.inverse()); // field-to-robot
 

@@ -583,7 +583,7 @@ public class PhotonCameraSim implements AutoCloseable {
                 }
             }
             videoSimRaw.putFrame(videoSimFrameRaw);
-        } else videoSimRaw.setConnectionStrategy(ConnectionStrategy.kForceClose);
+        } else videoSimRaw.setConnectionStrategy(ConnectionStrategy.FORCE_CLOSE);
         // draw/annotate target detection outline on processed view
         if (videoSimProcEnabled) {
             Imgproc.cvtColor(videoSimFrameRaw, videoSimFrameProcessed, Imgproc.COLOR_GRAY2BGR);
@@ -619,7 +619,7 @@ public class PhotonCameraSim implements AutoCloseable {
                 }
             }
             videoSimProcessed.putFrame(videoSimFrameProcessed);
-        } else videoSimProcessed.setConnectionStrategy(ConnectionStrategy.kForceClose);
+        } else videoSimProcessed.setConnectionStrategy(ConnectionStrategy.FORCE_CLOSE);
 
         // calculate multitag results
         Optional<MultiTargetPNPResult> multitagResult = Optional.empty();

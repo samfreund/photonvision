@@ -570,7 +570,7 @@ class PhotonPoseEstimatorTest {
                     bestTarget.getFiducialId(), estimatedPose.get().targetsUsed.get(0).getFiducialId());
 
             /* Straight on */
-            Transform3d straightOnTestTransform = new Transform3d(0, 0, 3, Rotation3d.kZero);
+            Transform3d straightOnTestTransform = new Transform3d(0, 0, 3, Rotation3d.ZERO);
 
             estimator.setRobotToCameraTransform(straightOnTestTransform);
 
@@ -837,7 +837,7 @@ class PhotonPoseEstimatorTest {
                                                 new TargetCorner(3, 4),
                                                 new TargetCorner(5, 6),
                                                 new TargetCorner(7, 8)))));
-        PhotonPoseEstimator estimator = new PhotonPoseEstimator(aprilTags, Transform3d.kZero);
+        PhotonPoseEstimator estimator = new PhotonPoseEstimator(aprilTags, Transform3d.ZERO);
 
         Optional<EstimatedRobotPose> estimatedPose =
                 estimator.estimateCoprocMultiTagPose(camera.result);
@@ -934,7 +934,7 @@ class PhotonPoseEstimatorTest {
                 new PhotonPoseEstimator(Field.loadField(Fields.FRC_2024_CRESCENDO), kRobotToCam);
 
         var multiTagEstimate = estimator.estimateCoprocMultiTagPose(result);
-        estimator.addHeadingData(result.getTimestampSeconds(), Rotation2d.kZero);
+        estimator.addHeadingData(result.getTimestampSeconds(), Rotation2d.ZERO);
         Optional<EstimatedRobotPose> estimatedPose =
                 estimator.estimateConstrainedSolvepnpPose(
                         result, cameraMat, distortion, multiTagEstimate.get().estimatedPose, true, 0);
