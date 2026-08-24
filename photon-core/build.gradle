@@ -29,6 +29,8 @@ dependencies {
     wpilibNatives wpilibTools.deps.wpilib("apriltag")
     wpilibNatives wpilibTools.deps.wpilib("fields")
     wpilibNatives wpilibTools.deps.wpilib("hal")
+    wpilibNatives wpilibTools.deps.wpilib("telemetry")
+    wpilibNatives wpilibTools.deps.wpilib("tunables")
     wpilibNatives wpilibTools.deps.wpilibOpenCv(openCVversion)
 
     // These stay as implementation dependencies since they don't have native code that gets packaged
