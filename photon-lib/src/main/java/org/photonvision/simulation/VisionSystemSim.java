@@ -428,7 +428,7 @@ public class VisionSystemSim {
             // this result's processing latency in milliseconds
             double latencyMillis = camSim.prop.estLatencyMs();
             // the image capture timestamp in seconds of this result
-            double timestampCapture = timestampNT / 1e6 - latencyMillis / 1e3;
+            double timestampCapture = timestampNT / 1e9 - latencyMillis / 1e3;
 
             // use camera pose from the image capture timestamp
             Pose3d lateRobotPose = getRobotPose(timestampCapture);

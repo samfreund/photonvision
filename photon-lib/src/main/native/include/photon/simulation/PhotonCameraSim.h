@@ -148,11 +148,11 @@ class PhotonCameraSim {
    * Determine if this camera should process a new frame based on performance
    * metrics and the time since the last update. This returns an Optional which
    * is either empty if no update should occur or a Long of the timestamp in
-   * microseconds of when the frame which should be received by NT. If a
+   * nanoseconds of when the frame which should be received by NT. If a
    * timestamp is returned, the last frame update time becomes that timestamp.
    *
    * @return Optional long which is empty while blocked or the NT entry
-   * timestamp in microseconds if ready
+   * timestamp in nanoseconds if ready
    */
   std::optional<uint64_t> ConsumeNextEntryTime();
 

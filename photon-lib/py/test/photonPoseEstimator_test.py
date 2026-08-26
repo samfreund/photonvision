@@ -129,7 +129,7 @@ def test_lowestAmbiguityStrategy():
                 0.4,
             ),
         ],
-        metadata=PhotonPipelineMetadata(0, int(2 * 1e3), 0),
+        metadata=PhotonPipelineMetadata(0, int(2 * 1e6), 0),
         multitagResult=None,
     )
 
@@ -189,9 +189,9 @@ def test_pnpDistanceTrigSolve():
     bestTarget = result.getBestTarget()
     assert bestTarget is not None
     assert bestTarget.fiducialId == 0
-    assert result.ntReceiveTimestampMicros > 0
+    assert result.ntReceiveTimestampNanos > 0
     # Make test independent of the FPGA time.
-    result.ntReceiveTimestampMicros = int(fakeTimestampSecs * 1e6)
+    result.ntReceiveTimestampNanos = int(fakeTimestampSecs * 1e9)
 
     estimator.addHeadingData(
         result.getTimestampSeconds(), realPose.rotation().to_rotation2d()
@@ -218,9 +218,9 @@ def test_pnpDistanceTrigSolve():
     bestTarget = result.getBestTarget()
     assert bestTarget is not None
     assert bestTarget.fiducialId == 0
-    assert result.ntReceiveTimestampMicros > 0
+    assert result.ntReceiveTimestampNanos > 0
     # Make test independent of the FPGA time.
-    result.ntReceiveTimestampMicros = int(fakeTimestampSecs * 1e6)
+    result.ntReceiveTimestampNanos = int(fakeTimestampSecs * 1e9)
 
     estimator.addHeadingData(
         result.getTimestampSeconds(), realPose.rotation().to_rotation2d()
@@ -240,7 +240,7 @@ def test_pnpDistanceTrigSolve():
 def test_multiTagOnCoprocStrategy():
     cameraOne = PhotonCameraInjector()
     cameraOne.result = PhotonPipelineResult(
-        int(11 * 1e6),
+        int(11 * 1e9),
         # There needs to be at least one target present for pose estimation to work
         # Doesn't matter which/how many targets for this test
         [
@@ -267,7 +267,7 @@ def test_multiTagOnCoprocStrategy():
                 0.7,
             )
         ],
-        metadata=PhotonPipelineMetadata(0, int(2 * 1e3), 0),
+        metadata=PhotonPipelineMetadata(0, int(2 * 1e6), 0),
         multitagResult=MultiTargetPNPResult(
             PnpResult(Transform3d(1, 3, 2, Rotation3d()))
         ),

@@ -322,8 +322,8 @@ class VisionSystemSim:
             # process a PhotonPipelineResult with visible targets
             camResult = camSim.process(latency, lateCameraPose, allTargets)
             # publish this info to NT at estimated timestamp of receive
-            # needs a timestamp in microseconds
-            camSim.submitProcessedFrame(camResult, timestampNt * 1.0e6)
+            # needs a timestamp in nanoseconds
+            camSim.submitProcessedFrame(camResult, timestampNt * 1.0e9)
             # display debug results
             for tgt in camResult.getTargets():
                 trf = tgt.getBestCameraToTarget()

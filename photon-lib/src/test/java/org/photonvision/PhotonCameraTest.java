@@ -140,9 +140,9 @@ class PhotonCameraTest {
                                 + " received at "
                                 + res.getTimestampSeconds()
                                 + " now: "
-                                + NetworkTablesJNI.now() / 1e6
+                                + NetworkTablesJNI.now() / 1e9
                                 + " time since last pong: "
-                                + res.metadata.timeSinceLastPong / 1e6);
+                                + res.metadata.timeSinceLastPong / 1e9);
             }
         }
         HAL.shutdown();
@@ -278,11 +278,13 @@ class PhotonCameraTest {
             }
 
             var result1 = new PhotonPipelineResult();
-            result1.metadata.captureTimestampMicros = seq * 100;
-            result1.metadata.publishTimestampMicros = seq * 150;
+            result1.metadata.captureTimestampNanos = seq * 100000;
+            result1.metadata.publishTimestampNanos = seq * 150000;
             result1.metadata.sequenceID = seq;
             if (tspClient != null) {
-                result1.metadata.timeSinceLastPong = tspClient.getPingMetadata().timeSinceLastPong();
+                // PingMetadata reports nanoseconds -- so does the metadata
+                result1.metadata.timeSinceLastPong =
+                        tspClient.getPingMetadata().timeSinceLastPong();
             } else {
                 result1.metadata.timeSinceLastPong = Long.MAX_VALUE;
             }
@@ -346,7 +348,7 @@ class PhotonCameraTest {
             PhotonPipelineResult noPongResult =
                     new PhotonPipelineResult(
                             new PhotonPipelineMetadata(
-                                    1, 2, 3, 10 * 1000000 // 10 seconds -> us since last pong
+                                    1, 2, 3, 10L * 1000000000 // 10 seconds -> ns since last pong
                                     ),
                             List.of(),
                             Optional.empty());

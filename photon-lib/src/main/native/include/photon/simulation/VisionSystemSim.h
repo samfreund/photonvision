@@ -453,7 +453,7 @@ class VisionSystemSim {
       uint64_t timestampNt = optTimestamp.value();
       wpi::units::second_t latency = camSim->prop.EstLatency();
       wpi::units::second_t timestampCapture =
-          wpi::units::microsecond_t{static_cast<double>(timestampNt)} - latency;
+          wpi::units::nanosecond_t{static_cast<double>(timestampNt)} - latency;
 
       wpi::math::Pose3d lateRobotPose = GetRobotPose(timestampCapture);
       wpi::math::Pose3d lateCameraPose =

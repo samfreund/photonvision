@@ -86,8 +86,8 @@ class PhotonPipelineResult : public PhotonPipelineResult_PhotonStruct {
    * @return The latency in the pipeline.
    */
   wpi::units::millisecond_t GetLatency() const {
-    return wpi::units::microsecond_t{static_cast<double>(
-        metadata.publishTimestampMicros - metadata.captureTimestampMicros)};
+    return wpi::units::nanosecond_t{static_cast<double>(
+        metadata.publishTimestampNanos - metadata.captureTimestampNanos)};
   }
 
   /**
@@ -146,7 +146,7 @@ class PhotonPipelineResult : public PhotonPipelineResult_PhotonStruct {
 
   // Since we don't trust NT time sync, keep track of when we got this packet
   // into robot code
-  wpi::units::microsecond_t ntReceiveTimestamp = -1_s;
+  wpi::units::nanosecond_t ntReceiveTimestamp = -1_s;
 
   inline static bool HAS_WARNED = false;
 };

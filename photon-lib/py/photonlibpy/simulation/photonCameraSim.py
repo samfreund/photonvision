@@ -433,15 +433,15 @@ class PhotonCameraSim:
 
         # put this simulated data to NT
         self.heartbeatCounter += 1
-        publishTimestampMicros = wpilib.Timer.get_monotonic_timestamp() * 1e6
+        publishTimestampNanos = wpilib.Timer.get_monotonic_timestamp() * 1e9
         return PhotonPipelineResult(
-            ntReceiveTimestampMicros=int(publishTimestampMicros + 10),
+            ntReceiveTimestampNanos=int(publishTimestampNanos + 10_000),
             metadata=PhotonPipelineMetadata(
-                captureTimestampMicros=int(publishTimestampMicros - latency * 1e6),
-                publishTimestampMicros=int(publishTimestampMicros),
+                captureTimestampNanos=int(publishTimestampNanos - latency * 1e9),
+                publishTimestampNanos=int(publishTimestampNanos),
                 sequenceID=self.heartbeatCounter,
                 # Pretend like we heard a pong recently
-                timeSinceLastPong=int(np.random.uniform(950, 1050)),
+                timeSinceLastPong=int(np.random.uniform(950_000, 1_050_000)),
             ),
             targets=detectableTgts,
             multitagResult=multiTagResults,
@@ -450,54 +450,60 @@ class PhotonCameraSim:
     def submitProcessedFrame(
         self,
         result: PhotonPipelineResult,
-        receiveTimestamp_us: float | None = None,
+        receiveTimestampNanos: float | None = None,
     ):
         """Simulate one processed frame of vision data, putting one result to NT. Image capture timestamp
         overrides :meth:`.PhotonPipelineResult.getTimestampSeconds` for more
         precise latency simulation.
 
         :param result:           The pipeline result to submit
-        :param receiveTimestamp: The (sim) timestamp when this result was read by NT in microseconds. If not passed image capture time is assumed be (current time - latency)
+        :param receiveTimestamp: The (sim) timestamp when this result was read by NT in nanoseconds. If not passed image capture time is assumed be (current time - latency)
         """
-        if receiveTimestamp_us is None:
-            receiveTimestamp_us = wpilib.Timer.get_monotonic_timestamp() * 1e6
-        receiveTimestamp_us = int(receiveTimestamp_us)
+        if receiveTimestampNanos is None:
+            receiveTimestampNanos = wpilib.Timer.get_monotonic_timestamp() * 1e9
+        receiveTimestampNanos = int(receiveTimestampNanos)
 
-        self.ts.latencyMillisEntry.set(result.getLatencyMillis(), receiveTimestamp_us)
+        self.ts.latencyMillisEntry.set(
+            result.getLatencyMillis(), receiveTimestampNanos
+        )
 
         newPacket = PhotonPipelineResult.photonStruct.pack(result)
-        self.ts.rawBytesEntry.set(newPacket.getData(), receiveTimestamp_us)
+        self.ts.rawBytesEntry.set(newPacket.getData(), receiveTimestampNanos)
 
         hasTargets = result.hasTargets()
-        self.ts.hasTargetEntry.set(hasTargets, receiveTimestamp_us)
+        self.ts.hasTargetEntry.set(hasTargets, receiveTimestampNanos)
         if not hasTargets:
-            self.ts.targetPitchEntry.set(0.0, receiveTimestamp_us)
-            self.ts.targetYawEntry.set(0.0, receiveTimestamp_us)
-            self.ts.targetAreaEntry.set(0.0, receiveTimestamp_us)
-            self.ts.targetPoseEntry.set(Transform3d(), receiveTimestamp_us)
-            self.ts.targetSkewEntry.set(0.0, receiveTimestamp_us)
+            self.ts.targetPitchEntry.set(0.0, receiveTimestampNanos)
+            self.ts.targetYawEntry.set(0.0, receiveTimestampNanos)
+            self.ts.targetAreaEntry.set(0.0, receiveTimestampNanos)
+            self.ts.targetPoseEntry.set(Transform3d(), receiveTimestampNanos)
+            self.ts.targetSkewEntry.set(0.0, receiveTimestampNanos)
         else:
             bestTarget = result.getBestTarget()
             assert bestTarget
 
-            self.ts.targetPitchEntry.set(bestTarget.getPitch(), receiveTimestamp_us)
-            self.ts.targetYawEntry.set(bestTarget.getYaw(), receiveTimestamp_us)
-            self.ts.targetAreaEntry.set(bestTarget.getArea(), receiveTimestamp_us)
-            self.ts.targetSkewEntry.set(bestTarget.getSkew(), receiveTimestamp_us)
+            self.ts.targetPitchEntry.set(bestTarget.getPitch(), receiveTimestampNanos)
+            self.ts.targetYawEntry.set(bestTarget.getYaw(), receiveTimestampNanos)
+            self.ts.targetAreaEntry.set(bestTarget.getArea(), receiveTimestampNanos)
+            self.ts.targetSkewEntry.set(bestTarget.getSkew(), receiveTimestampNanos)
 
             self.ts.targetPoseEntry.set(
-                bestTarget.getBestCameraToTarget(), receiveTimestamp_us
+                bestTarget.getBestCameraToTarget(), receiveTimestampNanos
             )
 
         intrinsics = self.prop.getIntrinsics()
         intrinsicsView = intrinsics.flatten().tolist()
-        self.ts.cameraIntrinsicsPublisher.set(list(intrinsicsView), receiveTimestamp_us)
+        self.ts.cameraIntrinsicsPublisher.set(
+            list(intrinsicsView), receiveTimestampNanos
+        )
 
         distortion = self.prop.getDistCoeffs()
         distortionView = distortion.flatten().tolist()
-        self.ts.cameraDistortionPublisher.set(list(distortionView), receiveTimestamp_us)
+        self.ts.cameraDistortionPublisher.set(
+            list(distortionView), receiveTimestampNanos
+        )
 
-        self.ts.heartbeatPublisher.set(self.heartbeatCounter, receiveTimestamp_us)
+        self.ts.heartbeatPublisher.set(self.heartbeatCounter, receiveTimestampNanos)
         self.heartbeatCounter += 1
 
         self.ts.subTable.get_instance().flush()

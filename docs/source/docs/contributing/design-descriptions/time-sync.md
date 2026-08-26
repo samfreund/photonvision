@@ -102,11 +102,11 @@ Clients may publish statistics to NetworkTables. If they do, they shall publish 
 
 | Key | Type | Notes |
 | ------ | ------ | ---- |
-| offset_us | Integer | The time offset that, when added to the client's local clock, provides server time |
+| offset_ns | Integer | The time offset (in nanoseconds) that, when added to the client's local clock, provides server time |
 | ping_tx_count | Integer | The total number of TSP Ping packets transmitted |
 | ping_rx_count | Integer | The total number of TSP Ping packets received |
-| pong_rx_time_us | Integer | The time, in client local time, that the last pong was received |
-| rtt2_us | Integer | The time in us from last complete (ping transmission to pong reception) |
+| pong_rx_time_ns | Integer | The time, in client local time, that the last pong was received |
+| rtt2_ns | Integer | The time in ns from last complete (ping transmission to pong reception) |
 
 PhotonVision has chosen to publish to the sub-table `/photonvision/.timesync/{DEVICE_HOSTNAME}`. Future implementations of this protocol may decide to implement this as a structured data type.
 

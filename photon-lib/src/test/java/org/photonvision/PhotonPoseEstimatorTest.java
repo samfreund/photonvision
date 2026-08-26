@@ -96,8 +96,8 @@ class PhotonPoseEstimatorTest {
         cameraOne.result =
                 new PhotonPipelineResult(
                         0,
-                        11 * 1000000,
-                        1100000,
+                        11L * 1000000000,
+                        1100000000,
                         1024,
                         List.of(
                                 new PhotonTrackedTarget(
@@ -184,8 +184,8 @@ class PhotonPoseEstimatorTest {
         cameraOne.result =
                 new PhotonPipelineResult(
                         0,
-                        4000000,
-                        1100000,
+                        4000000000L,
+                        1100000000,
                         1024,
                         List.of(
                                 new PhotonTrackedTarget(
@@ -274,8 +274,8 @@ class PhotonPoseEstimatorTest {
         cameraOne.result =
                 new PhotonPipelineResult(
                         0,
-                        17000000,
-                        1100000,
+                        17000000000L,
+                        1100000000,
                         1024,
                         List.of(
                                 new PhotonTrackedTarget(
@@ -365,8 +365,8 @@ class PhotonPoseEstimatorTest {
         cameraOne.result =
                 new PhotonPipelineResult(
                         0,
-                        1000000,
-                        1100000,
+                        1000000000L,
+                        1100000000,
                         1024,
                         List.of(
                                 new PhotonTrackedTarget(
@@ -445,8 +445,8 @@ class PhotonPoseEstimatorTest {
         cameraOne.result =
                 new PhotonPipelineResult(
                         0,
-                        7000000,
-                        1100000,
+                        7000000000L,
+                        1100000000,
                         1024,
                         List.of(
                                 new PhotonTrackedTarget(
@@ -595,8 +595,8 @@ class PhotonPoseEstimatorTest {
         cameraOne.result =
                 new PhotonPipelineResult(
                         0,
-                        20 * 1000000,
-                        1100000,
+                        20L * 1000000000,
+                        1100000000,
                         1024,
                         List.of(
                                 new PhotonTrackedTarget(
@@ -711,8 +711,8 @@ class PhotonPoseEstimatorTest {
         cameraOne.result =
                 new PhotonPipelineResult(
                         0,
-                        4_000_000,
-                        1_100_000,
+                        4_000_000_000L,
+                        1_100_000_000,
                         1024,
                         List.of(
                                 new PhotonTrackedTarget(
@@ -749,8 +749,8 @@ class PhotonPoseEstimatorTest {
         cameraOne.result =
                 new PhotonPipelineResult(
                         0,
-                        17_000_000,
-                        1_100_000,
+                        17_000_000_000L,
+                        1_100_000_000,
                         1024,
                         List.of(
                                 new PhotonTrackedTarget(
@@ -791,8 +791,8 @@ class PhotonPoseEstimatorTest {
         camera.result =
                 new PhotonPipelineResult(
                         0,
-                        11 * 1_000_000,
-                        1_100_000,
+                        11L * 1_000_000_000,
+                        1_100_000_000,
                         1024,
                         List.of(
                                 new PhotonTrackedTarget(

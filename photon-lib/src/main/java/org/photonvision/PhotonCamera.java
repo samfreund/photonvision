@@ -312,12 +312,12 @@ public class PhotonCamera implements AutoCloseable {
     }
 
     private void checkTimeSyncOrWarn(PhotonPipelineResult result) {
-        if (result.metadata.timeSinceLastPong > 5L * 1000000L) {
+        if (result.metadata.timeSinceLastPong > 5L * 1000000000L) {
             String warningText =
                     "PhotonVision coprocessor at path "
                             + path
                             + " is not connected to the TimeSyncServer? It's been "
-                            + String.format("%.2f", result.metadata.timeSinceLastPong / 1e6)
+                            + String.format("%.2f", result.metadata.timeSinceLastPong / 1e9)
                             + "s since the coprocessor last heard a pong.";
 
             timesyncAlert.setText(warningText);

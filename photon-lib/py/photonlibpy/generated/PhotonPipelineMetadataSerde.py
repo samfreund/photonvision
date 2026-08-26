@@ -42,8 +42,8 @@ if TYPE_CHECKING:
 
 class PhotonPipelineMetadataSerde:
     # Message definition md5sum. See photon_packet.adoc for details
-    MESSAGE_VERSION = "ac0a45f686457856fb30af77699ea356"
-    MESSAGE_FORMAT = "int64 sequenceID;int64 captureTimestampMicros;int64 publishTimestampMicros;int64 timeSinceLastPong;"
+    MESSAGE_VERSION = "5231116d7f87ff560e6aa5263d0eee02"
+    MESSAGE_FORMAT = "int64 sequenceID;int64 captureTimestampNanos;int64 publishTimestampNanos;int64 timeSinceLastPong;"
 
     @staticmethod
     def pack(value: "PhotonPipelineMetadata") -> "Packet":
@@ -52,11 +52,11 @@ class PhotonPipelineMetadataSerde:
         # sequenceID is of intrinsic type int64
         ret.encodeLong(value.sequenceID)
 
-        # captureTimestampMicros is of intrinsic type int64
-        ret.encodeLong(value.captureTimestampMicros)
+        # captureTimestampNanos is of intrinsic type int64
+        ret.encodeLong(value.captureTimestampNanos)
 
-        # publishTimestampMicros is of intrinsic type int64
-        ret.encodeLong(value.publishTimestampMicros)
+        # publishTimestampNanos is of intrinsic type int64
+        ret.encodeLong(value.publishTimestampNanos)
 
         # timeSinceLastPong is of intrinsic type int64
         ret.encodeLong(value.timeSinceLastPong)
@@ -69,11 +69,11 @@ class PhotonPipelineMetadataSerde:
         # sequenceID is of intrinsic type int64
         ret.sequenceID = packet.decodeLong()
 
-        # captureTimestampMicros is of intrinsic type int64
-        ret.captureTimestampMicros = packet.decodeLong()
+        # captureTimestampNanos is of intrinsic type int64
+        ret.captureTimestampNanos = packet.decodeLong()
 
-        # publishTimestampMicros is of intrinsic type int64
-        ret.publishTimestampMicros = packet.decodeLong()
+        # publishTimestampNanos is of intrinsic type int64
+        ret.publishTimestampNanos = packet.decodeLong()
 
         # timeSinceLastPong is of intrinsic type int64
         ret.timeSinceLastPong = packet.decodeLong()

@@ -343,6 +343,10 @@ public class NetworkTablesManager {
         broadcastVersion();
     }
 
+    /**
+     * @return The offset, in nanoseconds, which when added to the local wpi::nt::Now timebase yields
+     *     the Time Sync Server's timebase
+     */
     public long getOffset() {
         return m_timeSync.getOffset();
     }

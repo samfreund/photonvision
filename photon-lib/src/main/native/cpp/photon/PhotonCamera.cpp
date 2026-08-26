@@ -151,8 +151,8 @@ PhotonPipelineResult PhotonCamera::GetLatestResult() {
   VerifyVersion();
 
   // Fill the packet with latest data and populate result.
-  wpi::units::microsecond_t now =
-      wpi::units::microsecond_t(wpi::RobotController::GetMonotonicTime());
+  wpi::units::nanosecond_t now =
+      wpi::units::nanosecond_t(wpi::RobotController::GetMonotonicTime());
   const auto value = rawBytesEntry.Get();
   if (!value.size()) return PhotonPipelineResult{};
 
@@ -198,7 +198,7 @@ std::vector<PhotonPipelineResult> PhotonCamera::GetAllUnreadResults() {
 
     // TODO: NT4 timestamps are still not to be trusted. But it's the best we
     // can do until we can make time sync more reliable.
-    result.SetReceiveTimestamp(wpi::units::microsecond_t(value.time) -
+    result.SetReceiveTimestamp(wpi::units::nanosecond_t(value.time) -
                                result.GetLatency());
 
     ret.push_back(result);
@@ -212,11 +212,11 @@ void PhotonCamera::UpdateDisconnectAlert() {
 }
 
 void PhotonCamera::CheckTimeSyncOrWarn(photon::PhotonPipelineResult& result) {
-  if (result.metadata.timeSinceLastPong > 5L * 1000000L) {
+  if (result.metadata.timeSinceLastPong > 5L * 1000000000L) {
     std::string warningText =
         "PhotonVision coprocessor at path " + path +
         " is not connected to the TimeSyncServer? It's been " +
-        std::to_string(result.metadata.timeSinceLastPong / 1e6) +
+        std::to_string(result.metadata.timeSinceLastPong / 1e9) +
         "s since the coprocessor last heard a pong.";
 
     timesyncAlert.SetText(warningText);

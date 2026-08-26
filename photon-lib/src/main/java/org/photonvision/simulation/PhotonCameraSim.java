@@ -76,6 +76,7 @@ public class PhotonCameraSim implements AutoCloseable {
     /** This simulated camera's {@link SimCameraProperties} */
     public final SimCameraProperties prop;
 
+    /** The next time, in nanoseconds, this camera should publish a frame to NT */
     private long nextNTEntryTime = WPIUtilJNI.now();
 
     private double maxSightRangeMeters = Double.MAX_VALUE;
@@ -304,10 +305,10 @@ public class PhotonCameraSim implements AutoCloseable {
     /**
      * Determine if this camera should process a new frame based on performance metrics and the time
      * since the last update. This returns an Optional which is either empty if no update should occur
-     * or a Long of the timestamp in microseconds of when the frame which should be received by NT. If
+     * or a Long of the timestamp in nanoseconds of when the frame which should be received by NT. If
      * a timestamp is returned, the last frame update time becomes that timestamp.
      *
-     * @return Optional long which is empty while blocked or the NT entry timestamp in microseconds if
+     * @return Optional long which is empty while blocked or the NT entry timestamp in nanoseconds if
      *     ready
      */
     public Optional<Long> consumeNextEntryTime() {
@@ -318,7 +319,7 @@ public class PhotonCameraSim implements AutoCloseable {
         // prepare next latest update
         while (now >= nextNTEntryTime) {
             timestamp = nextNTEntryTime;
-            long frameTime = (long) (prop.estMsUntilNextFrame() * 1e3);
+            long frameTime = (long) (prop.estMsUntilNextFrame() * 1e6);
             nextNTEntryTime += frameTime;
 
             // if frame time is very small, avoid blocking
@@ -651,14 +652,15 @@ public class PhotonCameraSim implements AutoCloseable {
         }
 
         // put this simulated data to NT
-        var now = RobotController.getMonotonicTime();
+        // metadata timestamps are in nanoseconds per the packet format's convention
+        long nowNanos = RobotController.getMonotonicTime();
         var ret =
                 new PhotonPipelineResult(
                         heartbeatCounter,
-                        now - (long) (latencyMillis * 1000),
-                        now,
+                        nowNanos - (long) (latencyMillis * 1e6),
+                        nowNanos,
                         // Pretend like we heard a pong recently
-                        1000L + (long) ((Math.random() - 0.5) * 50),
+                        1_000_000L + (long) ((Math.random() - 0.5) * 50_000),
                         detectableTgts,
                         multitagResult);
         return ret;
@@ -680,7 +682,7 @@ public class PhotonCameraSim implements AutoCloseable {
      * precise latency simulation.
      *
      * @param result The pipeline result to submit
-     * @param receiveTimestamp The (sim) timestamp when this result was read by NT in microseconds
+     * @param receiveTimestamp The (sim) timestamp when this result was read by NT in nanoseconds
      */
     public void submitProcessedFrame(PhotonPipelineResult result, long receiveTimestamp) {
         ts.latencyMillisEntry.set(result.metadata.getLatencyMillis(), receiveTimestamp);

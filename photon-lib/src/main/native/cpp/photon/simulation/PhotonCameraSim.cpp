@@ -97,7 +97,7 @@ std::optional<uint64_t> PhotonCameraSim::ConsumeNextEntryTime() {
     timestamp = nextNTEntryTime;
     hasTimestamp = true;
     int64_t frameTime = prop.EstSecUntilNextFrame()
-                            .convert<wpi::units::microseconds>()
+                            .convert<wpi::units::nanoseconds>()
                             .to<int64_t>();
     nextNTEntryTime += frameTime;
 
@@ -360,8 +360,8 @@ PhotonPipelineResult PhotonCameraSim::Process(
 
   return PhotonPipelineResult{
       PhotonPipelineMetadata{heartbeatCounter, 0,
-                             wpi::units::microsecond_t{latency}.to<int64_t>(),
-                             1000000},
+                             wpi::units::nanosecond_t{latency}.to<int64_t>(),
+                             1000000000},
       detectableTgts, multiTagResults};
 }
 void PhotonCameraSim::SubmitProcessedFrame(const PhotonPipelineResult& result) {

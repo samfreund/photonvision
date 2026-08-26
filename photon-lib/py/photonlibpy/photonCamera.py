@@ -156,7 +156,7 @@ class PhotonCamera:
                 pkt = Packet(byteList)
                 newResult = PhotonPipelineResult.photonStruct.unpack(pkt)
                 # NT4 allows us to correct the timestamp based on when the message was sent
-                newResult.ntReceiveTimestampMicros = timestamp
+                newResult.ntReceiveTimestampNanos = timestamp
                 ret.append(newResult)
 
         return ret
@@ -182,8 +182,8 @@ class PhotonCamera:
         else:
             pkt = Packet(byteList)
             retVal = PhotonPipelineResult.photonStruct.unpack(pkt)
-            # We don't trust NT4 time, hack around
-            retVal.ntReceiveTimestampMicros = now
+            # We don't trust NT4 time, hack around. Note get_monotonic_time is in microseconds
+            retVal.ntReceiveTimestampNanos = now * 1000
             return retVal
 
     def getDriverMode(self) -> bool:
