@@ -18,8 +18,8 @@
 from enum import Enum
 from typing import List
 
-import hal
 import ntcore
+import wpiutil
 
 # magical import to make serde stuff work
 import photonlibpy.generated  # noqa
@@ -124,9 +124,8 @@ class PhotonCamera:
         inst.start()
 
         # Usage reporting
-        hal.report_usage(
-            "PhotonVision/PhotonCamera",  # Not 100% sure if this is correct
-            str(PhotonCamera.instance_count),
+        wpiutil.report_usage(
+            "PhotonVision/PhotonCamera", str(PhotonCamera.instance_count)
         )
         PhotonCamera.instance_count += 1
 

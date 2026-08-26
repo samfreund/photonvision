@@ -34,7 +34,6 @@
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
-#include <wpi/hal/UsageReporting.hpp>
 #include <wpi/math/geometry/Pose3d.hpp>
 #include <wpi/math/geometry/Rotation3d.hpp>
 #include <wpi/math/geometry/Transform3d.hpp>
@@ -42,6 +41,7 @@
 #include <wpi/units/angle.hpp>
 #include <wpi/units/math.hpp>
 #include <wpi/units/time.hpp>
+#include <wpi/util/UsageReporting.hpp>
 
 #include "photon/PhotonCamera.h"
 #include "photon/estimation/TargetModel.h"
@@ -69,7 +69,7 @@ PhotonPoseEstimator::PhotonPoseEstimator(wpi::fields::Field tags,
       m_robotToCamera(robotToCamera),
       headingBuffer(
           wpi::math::TimeInterpolatableBuffer<wpi::math::Rotation2d>(1_s)) {
-  HAL_ReportUsage("PhotonVision/PhotonPoseEstimator", InstanceCount, "");
+  wpi::util::ReportUsage("PhotonVision/PhotonPoseEstimator", std::to_string(InstanceCount));
   InstanceCount++;
 }
 

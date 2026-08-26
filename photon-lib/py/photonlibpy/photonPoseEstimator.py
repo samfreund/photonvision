@@ -16,10 +16,9 @@
 ###############################################################################
 
 from typing import Optional
-
-import hal
 import wpilib
 import wpimath.units
+import wpiutil
 from robotpy_fields import Field
 from wpimath import (
     Pose2d,
@@ -66,9 +65,9 @@ class PhotonPoseEstimator:
         self._headingBuffer = TimeInterpolatableRotation2dBuffer(1)
 
         # Usage reporting
-        hal.report_usage(
+        wpiutil.report_usage(
             "PhotonVision/PhotonPoseEstimator",
-            str(PhotonPoseEstimator.instance_count),
+            str(PhotonPoseEstimator.instance_count)
         )
         PhotonPoseEstimator.instance_count += 1
 

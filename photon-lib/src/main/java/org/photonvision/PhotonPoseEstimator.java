@@ -31,7 +31,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.fields.Field;
-import org.wpilib.hardware.hal.HAL;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -45,6 +44,7 @@ import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
 import org.wpilib.math.numbers.N8;
 import org.wpilib.util.Pair;
+import org.wpilib.util.UsageReporting;
 
 /**
  * The PhotonPoseEstimator class filters or combines readings from all the AprilTags visible at a
@@ -145,7 +145,7 @@ public class PhotonPoseEstimator {
         this.fieldTags = fieldTags;
         this.robotToCamera = robotToCamera;
 
-        HAL.reportUsage("PhotonVision/PhotonPoseEstimator", InstanceCount, "");
+        UsageReporting.reportUsage("PhotonVision/PhotonPoseEstimator", Integer.toString(InstanceCount));
         InstanceCount++;
     }
 
