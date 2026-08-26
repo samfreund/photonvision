@@ -283,8 +283,7 @@ class PhotonCameraTest {
             result1.metadata.sequenceID = seq;
             if (tspClient != null) {
                 // PingMetadata reports nanoseconds -- so does the metadata
-                result1.metadata.timeSinceLastPong =
-                        tspClient.getPingMetadata().timeSinceLastPong();
+                result1.metadata.timeSinceLastPong = tspClient.getPingMetadata().timeSinceLastPong();
             } else {
                 result1.metadata.timeSinceLastPong = Long.MAX_VALUE;
             }
