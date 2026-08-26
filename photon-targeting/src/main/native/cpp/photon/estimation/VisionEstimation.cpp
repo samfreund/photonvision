@@ -45,7 +45,7 @@ std::optional<PnpResult> EstimateCamPosePNP(
     const std::vector<PhotonTrackedTarget>& visTags,
     const wpi::fields::Field& layout, const TargetModel& tagModel) {
   if (visTags.size() == 0) {
-    return PnpResult();
+    return {};
   }
 
   std::vector<photon::TargetCorner> corners{};
@@ -62,7 +62,7 @@ std::optional<PnpResult> EstimateCamPosePNP(
     }
   }
   if (knownTags.size() == 0 || corners.size() == 0 || corners.size() % 4 != 0) {
-    return PnpResult{};
+    return {};
   }
 
   std::vector<cv::Point2f> points = OpenCVHelp::CornersToPoints(corners);
@@ -71,7 +71,7 @@ std::optional<PnpResult> EstimateCamPosePNP(
     auto camToTag = OpenCVHelp::SolvePNP_Square(cameraMatrix, distCoeffs,
                                                 tagModel.GetVertices(), points);
     if (!camToTag) {
-      return PnpResult{};
+      return {};
     }
     wpi::math::Pose3d bestPose =
         knownTags[0].pose.TransformBy(camToTag->best.Inverse());
@@ -114,7 +114,7 @@ std::optional<photon::PnpResult> EstimateRobotPoseConstrainedSolvePNP(
     const photon::TargetModel& tagModel, bool headingFree,
     wpi::math::Rotation2d gyroTheta, double gyroErrorScaleFac) {
   if (visTags.size() == 0) {
-    return photon::PnpResult();
+    return {};
   }
 
   std::vector<photon::TargetCorner> corners{};
@@ -131,7 +131,7 @@ std::optional<photon::PnpResult> EstimateRobotPoseConstrainedSolvePNP(
     }
   }
   if (knownTags.size() == 0 || corners.size() == 0 || corners.size() % 4 != 0) {
-    return photon::PnpResult{};
+    return {};
   }
 
   std::vector<cv::Point2f> points =
