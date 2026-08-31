@@ -87,9 +87,8 @@ class PhotonPipelineResult : public PhotonPipelineResult_PhotonStruct {
    */
   wpi::units::millisecond_t GetLatency() const {
     return wpi::units::nanosecond_t{
-               static_cast<double>(metadata.publishTimestampNanos -
-                                   metadata.captureTimestampNanos)} /
-           1'000'000;
+        static_cast<double>(metadata.publishTimestampNanos -
+                            metadata.captureTimestampNanos)};
   }
 
   /**
