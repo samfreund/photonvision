@@ -24,6 +24,7 @@
 
 #include "photon/PhotonCamera.h"
 
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -212,7 +213,7 @@ void PhotonCamera::UpdateDisconnectAlert() {
 }
 
 void PhotonCamera::CheckTimeSyncOrWarn(photon::PhotonPipelineResult& result) {
-  if (result.metadata.timeSinceLastPong > 5L * 1000000000L) {
+  if (result.metadata.timeSinceLastPong > INT64_C(5) * 1000000000L) {
     std::string warningText =
         "PhotonVision coprocessor at path " + path +
         " is not connected to the TimeSyncServer? It's been " +
