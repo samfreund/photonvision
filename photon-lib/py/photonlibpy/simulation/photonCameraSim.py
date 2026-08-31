@@ -463,9 +463,7 @@ class PhotonCameraSim:
             receiveTimestampNanos = wpilib.Timer.get_monotonic_timestamp() * 1e9
         receiveTimestampNanos = int(receiveTimestampNanos)
 
-        self.ts.latencyMillisEntry.set(
-            result.getLatencyMillis(), receiveTimestampNanos
-        )
+        self.ts.latencyMillisEntry.set(result.getLatencyMillis(), receiveTimestampNanos)
 
         newPacket = PhotonPipelineResult.photonStruct.pack(result)
         self.ts.rawBytesEntry.set(newPacket.getData(), receiveTimestampNanos)

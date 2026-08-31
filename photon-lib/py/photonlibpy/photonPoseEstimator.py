@@ -66,8 +66,7 @@ class PhotonPoseEstimator:
 
         # Usage reporting
         wpiutil.report_usage(
-            "PhotonVision/PhotonPoseEstimator",
-            str(PhotonPoseEstimator.instance_count)
+            "PhotonVision/PhotonPoseEstimator", str(PhotonPoseEstimator.instance_count)
         )
         PhotonPoseEstimator.instance_count += 1
 

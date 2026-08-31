@@ -69,7 +69,8 @@ PhotonPoseEstimator::PhotonPoseEstimator(wpi::fields::Field tags,
       m_robotToCamera(robotToCamera),
       headingBuffer(
           wpi::math::TimeInterpolatableBuffer<wpi::math::Rotation2d>(1_s)) {
-  wpi::util::ReportUsage("PhotonVision/PhotonPoseEstimator", std::to_string(InstanceCount));
+  wpi::util::ReportUsage("PhotonVision/PhotonPoseEstimator",
+                         std::to_string(InstanceCount));
   InstanceCount++;
 }
 
