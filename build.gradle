@@ -31,6 +31,7 @@ ext.allOutputsFolder = file("$project.buildDir/outputs")
 
 ext {
     wpilibVersion = "2027.0.0-alpha-7"
+    mrclibVersion = "2027.1.0-alpha-1-116-g5288562"
     openCVversion = "2027-4.13.0-3"
     ejmlVersion = "0.46.0";
     avajeJsonbVersion = "3.14";

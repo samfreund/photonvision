@@ -14,6 +14,18 @@ apply from: "${rootDir}/shared/config.gradle"
 apply from: "${rootDir}/shared/javacommon.gradle"
 
 nativeUtils {
+    nativeDependencyContainer {
+        mrclib_sconly(getNativeDependencyTypeClass('WPISharedMavenDependency')) {
+            groupId = "org.wpilib.mrclib"
+            artifactId = "mrclib-cpp"
+            headerClassifier = "headers"
+            ext = "zip"
+            version = mrclibVersion
+            skipAtRuntimePlatforms.add(nativeUtils.wpi.platforms.systemcore)
+            targetPlatforms.add(nativeUtils.wpi.platforms.systemcore)
+            noDebugSplit = true
+        }
+    }
     exportsConfigs {
         "${nativeName}" {}
     }
@@ -49,6 +61,9 @@ model {
             binaries.all {
                 it.tasks.withType(CppCompile) {
                     it.dependsOn generateProto
+                }
+                if (it.targetPlatform.name == nativeUtils.wpi.platforms.systemcore) {
+                    nativeUtils.useRequiredLibrary(it, "mrclib_sconly")
                 }
             }
 
@@ -115,6 +130,9 @@ model {
                 lib library: "${nativeName}JNI", linkage: 'shared'
                 it.tasks.withType(CppCompile) {
                     it.dependsOn generateProto
+                }
+                if (it.targetPlatform.name == nativeUtils.wpi.platforms.systemcore) {
+                    nativeUtils.useRequiredLibrary(it, "mrclib_sconly")
                 }
             }
 
