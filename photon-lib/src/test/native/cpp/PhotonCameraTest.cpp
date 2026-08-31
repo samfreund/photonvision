@@ -103,7 +103,7 @@ TEST_CASE("PhotonCameraTest Alerts", "[photonlib]") {
   // GIVEN a simulated camera
   photon::PhotonCameraSim sim(&camera);
   // AND a result with a timeSinceLastPong in the past
-  photon::PhotonPipelineMetadata metadata{3, 1, 2, 10L * 1000000000};
+  photon::PhotonPipelineMetadata metadata{3, 1, 2, 10LL * 1000000000};
   photon::PhotonPipelineResult noPongResult{
       metadata, std::vector<photon::PhotonTrackedTarget>{}, std::nullopt};
 
