@@ -309,7 +309,7 @@ class VisionSystemSim:
             timestampNt = optTimestamp
             latency = camSim.prop.estLatency()
             # the image capture timestamp in seconds of this result
-            timestampCapture = timestampNt - latency / 1.0e3
+            timestampCapture = timestampNt - latency  # latency is already in seconds
 
             # use camera pose from the image capture timestamp
             lateRobotPose = self.getRobotPose(timestampCapture)
