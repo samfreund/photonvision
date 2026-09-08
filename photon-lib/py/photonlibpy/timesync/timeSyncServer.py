@@ -72,7 +72,7 @@ class TimeSyncServer:
                     self.logger.error("Invalid Version/ID")
                     continue  # Ignore invalid pings
 
-                server_time = int(self.time_provider() * 1e6)  # Convert to microseconds
+                server_time = int(self.time_provider() * 1e9)  # Convert to nanoseconds
                 pong = TspPong(ping, server_time)
                 udp_socket.sendto(pong.pack(), addr)
 
