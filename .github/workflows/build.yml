@@ -571,7 +571,7 @@ jobs:
         name: Generate image
         id: generate_image
         with:
-          image_url: "https://github.com/PhotonVision/photon-image-modifier/actions/runs/34061366158/artifacts/10138913567"
+          image_url: "https://github.com/samfreund/photon-image-modifier/releases/download/bah/photonvision_rubikpi3.tar.xz"
           use_cache: ${{ matrix.cache || 'no' }}
           minimum_free_mb: ${{ matrix.minimum_free_mb }}
           root_location: ${{ matrix.root_location || 'partition=2' }}
