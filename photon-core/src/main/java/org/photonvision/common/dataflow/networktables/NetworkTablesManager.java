@@ -357,13 +357,14 @@ public class NetworkTablesManager {
         String hostname = config.shouldManage ? config.hostname : CameraServerJNI.getHostname();
         logger.debug("Starting NT Client with hostname: " + hostname);
         ntInstance.startClient(hostname);
+        // Determine if ntServerAddress is a team number or an IP/hostname.
+        // setServerTeam silently ignores non-numeric strings (AddTeamServer returns
+        // without adding a server), so we must check explicitly.
         try {
-            if (!m_isRetryingConnection)
-                logger.info("Starting NT Client, server team is " + config.ntServerAddress);
+            int team = Integer.parseInt(config.ntServerAddress);
             ntInstance.setServerTeam(config.ntServerAddress);
         } catch (NumberFormatException e) {
-            if (!m_isRetryingConnection)
-                logger.info("Starting NT Client, server IP is \"" + config.ntServerAddress + "\"");
+            // ntServerAddress is not a valid number (e.g., IP address or hostname).
             ntInstance.setServer(config.ntServerAddress);
         }
         ntInstance.startDSClient();
