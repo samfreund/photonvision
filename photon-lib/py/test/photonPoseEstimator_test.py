@@ -60,7 +60,7 @@ def test_lowestAmbiguityStrategy():
     aprilTags = fakeAprilTagFieldLayout()
     cameraOne = PhotonCameraInjector()
     cameraOne.result = PhotonPipelineResult(
-        int(11 * 1e6),
+        int(11 * 1e9),
         [
             PhotonTrackedTarget(
                 3.0,
@@ -129,7 +129,7 @@ def test_lowestAmbiguityStrategy():
                 0.4,
             ),
         ],
-        metadata=PhotonPipelineMetadata(0, int(2 * 1e6), 0),
+    metadata=PhotonPipelineMetadata(0, int(2 * 1e6), 0),  # 2ms latency in nanoseconds
         multitagResult=None,
     )
 
@@ -267,7 +267,7 @@ def test_multiTagOnCoprocStrategy():
                 0.7,
             )
         ],
-        metadata=PhotonPipelineMetadata(0, int(2 * 1e6), 0),
+    metadata=PhotonPipelineMetadata(0, int(2 * 1e6), 0),  # 2ms latency in nanoseconds
         multitagResult=MultiTargetPNPResult(
             PnpResult(Transform3d(1, 3, 2, Rotation3d()))
         ),
