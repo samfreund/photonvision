@@ -140,7 +140,7 @@ class PhotonCamera:
 
         self._versionCheck()
 
-        changes = self._rawBytesEntry.readQueue()
+        changes = self._rawBytesEntry.read_queue()
 
         ret = []
 
