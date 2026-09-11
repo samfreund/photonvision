@@ -27,7 +27,7 @@ jobs:
     defaults:
       run:
         working-directory: photon-client
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v5
@@ -50,7 +50,7 @@ jobs:
   run_java_cpp_docs:
     name: Build Java and C++ API Docs
     needs: [validation]
-    runs-on: "ubuntu-24.04"
+    runs-on: "ubuntu-26.04"
     steps:
     - uses: actions/checkout@v6
       with:
@@ -72,7 +72,7 @@ jobs:
   publish_api_docs:
     name: Publish API Docs
     needs: [run_java_cpp_docs]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       # Download docs artifact
       - uses: actions/download-artifact@v8
@@ -99,7 +99,7 @@ jobs:
   publish_demo:
       name: Publish PhotonClient Demo
       needs: [build_demo]
-      runs-on: ubuntu-24.04
+      runs-on: ubuntu-26.04
       steps:
       - uses: actions/download-artifact@v8
         with:

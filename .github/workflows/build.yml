@@ -31,7 +31,7 @@ jobs:
   #             artifact-name: Win64
   #           - os: macos-14
   #             artifact-name: macOS
-  #           - os: ubuntu-24.04
+  #           - os: ubuntu-26.04
   #             artifact-name: Linux
 
   #     name: "Photonlib - Build Examples - ${{ matrix.os }}"
@@ -53,7 +53,7 @@ jobs:
   #         run: |
   #           find ~/.gradle/cache/ -name *bookworm* -exec rm -rf {} +
   #           du -h . | sort -h
-  #         if: matrix.os == 'ubuntu-24.04'
+  #         if: matrix.os == 'ubuntu-26.04'
   #       # Download prebuilt photonlib artifacts
   #       - uses: actions/download-artifact@v7
   #         with:
@@ -164,7 +164,7 @@ jobs:
         run: ./gradlew test jacocoTestReport --stacktrace
   build-offline-docs:
     name: "Build Offline Docs"
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -191,7 +191,7 @@ jobs:
 
   build-photonlib-vendorjson:
     name: "Build Vendor JSON"
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [validation]
     steps:
       - uses: actions/checkout@v6
@@ -271,7 +271,7 @@ jobs:
             artifact-name: Linux
             build-options: "-Ponlylinuxx86-64"
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container: ${{ matrix.container }}
     name: "Photonlib - Build Docker - ${{ matrix.artifact-name }}"
     needs: [validation]
@@ -300,7 +300,7 @@ jobs:
   combine:
     name: Combine
     needs: [build-photonlib-docker, build-photonlib-host]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v6
         with:
@@ -329,10 +329,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-24.04
+          - os: ubuntu-26.04
             artifact-name: Linux
             arch-override: linuxx86-64
-          - os: ubuntu-24.04
+          - os: ubuntu-26.04
             artifact-name: LinuxArm64
             arch-override: linuxarm64
 
@@ -475,79 +475,79 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: RaspberryPi
             plat_override: LINUX_RASPBIAN64
             image_name: photonvision_raspi.img.xz
             minimum_free_mb: 100
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: limelight2
             plat_override: LINUX_RASPBIAN64
             image_name: photonvision_limelight.img.xz
             minimum_free_mb: 100
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: limelight3
             plat_override: LINUX_RASPBIAN64
             image_name: photonvision_limelight3.img.xz
             minimum_free_mb: 100
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: limelight3G
             plat_override: LINUX_RASPBIAN64
             image_name: photonvision_limelight3g.img.xz
             minimum_free_mb: 100
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: limelight4
             plat_override: LINUX_RASPBIAN64
             image_name: photonvision_limelight4.img.xz
             minimum_free_mb: 100
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: luma_p1
             plat_override: LINUX_RASPBIAN64
             image_name: photonvision_luma_p1.img.xz
             minimum_free_mb: 100
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: orangepi5
             plat_override: LINUX_RK3588_64
             image_name: photonvision_opi5.img.xz
             minimum_free_mb: 1024
             root_location: 'partition=1'
             shrink_image: 'no'
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: orangepi5b
             plat_override: LINUX_RK3588_64
             image_name: photonvision_opi5b.img.xz
             minimum_free_mb: 1024
             root_location: 'partition=1'
             shrink_image: 'no'
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: orangepi5plus
             plat_override: LINUX_RK3588_64
             image_name: photonvision_opi5plus.img.xz
             minimum_free_mb: 1024
             root_location: 'partition=1'
             shrink_image: 'no'
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: orangepi5pro
             plat_override: LINUX_RK3588_64
             image_name: photonvision_opi5pro.img.xz
             minimum_free_mb: 1024
             root_location: 'partition=1'
             shrink_image: 'no'
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: orangepi5max
             plat_override: LINUX_RK3588_64
             image_name: photonvision_opi5max.img.xz
             minimum_free_mb: 1024
             root_location: 'partition=1'
             shrink_image: 'no'
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: rock5c
             plat_override: LINUX_RK3588_64
             image_name: photonvision_rock5c.img.xz
             minimum_free_mb: 1024
             root_location: 'partition=1'
             shrink_image: 'no'
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             image_suffix: rubikpi3
             cache: 'yes'
             plat_override: LINUX_QCS6490
@@ -652,7 +652,7 @@ jobs:
     # Require smoketest-native so that if those fail, we don't release broken artifacts
     needs: [build-photonlib-vendorjson, build-image, combine, build-package-linux, build-package-macos, build-package-windows, run-smoketest-native]
     if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) && github.repository == 'PhotonVision/photonvision'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       # Download all fat JARs
       - uses: actions/download-artifact@v8
