@@ -1,6 +1,3 @@
-import typing
-
-import telemetry
 import wpilib
 from robotpy_fields import Field
 from wpilib import Field2d
@@ -34,14 +31,12 @@ class VisionSystemSim:
         self.dbgField: Field2d = Field2d()
         self.bufferLength: seconds = 1.5
 
-        self.camSimMap: typing.Dict[str, PhotonCameraSim] = {}
-        self.camTrfMap: typing.Dict[
-            PhotonCameraSim, TimeInterpolatablePose3dBuffer
-        ] = {}
+        self.camSimMap: dict[str, PhotonCameraSim] = {}
+        self.camTrfMap: dict[PhotonCameraSim, TimeInterpolatablePose3dBuffer] = {}
         self.robotPoseBuffer: TimeInterpolatablePose3dBuffer = (
             TimeInterpolatablePose3dBuffer(self.bufferLength)
         )
-        self.targetSets: typing.Dict[str, list[VisionTargetSim]] = {}
+        self.targetSets: dict[str, list[VisionTargetSim]] = {}
 
         self.tableName: str = "VisionSystemSim-" + visionSystemName
 
