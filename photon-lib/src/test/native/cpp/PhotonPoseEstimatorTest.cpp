@@ -27,8 +27,8 @@
 #include <utility>
 #include <vector>
 
-#include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <wpi/fields/Field.hpp>
 #include <wpi/fields/fields.hpp>
 #include <wpi/math/geometry/Pose3d.hpp>
@@ -104,15 +104,14 @@ TEST_CASE("PhotonPoseEstimatorTest LowestAmbiguityStrategy", "[poseest]") {
   REQUIRE(estimatedPose);
   wpi::math::Pose3d pose = estimatedPose.value().estimatedPose;
 
-  CHECK(11 == Catch::Approx(wpi::units::unit_cast<double>(
-                                estimatedPose.value().timestamp))
-                  .margin(.02));
-  CHECK(1 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(.01));
-  CHECK(3 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(.01));
-  CHECK(2 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(estimatedPose.value().timestamp),
+             Catch::Matchers::WithinAbs(11, .02));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(1, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(3, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(2, .01));
   // Only the chosen (lowest-ambiguity) target should be reported as used.
   CHECK(static_cast<size_t>(1) == estimatedPose.value().targetsUsed.size());
   CHECK(1 == estimatedPose.value().targetsUsed[0].GetFiducialId());
@@ -153,12 +152,12 @@ TEST_CASE("PhotonPoseEstimatorTest LowestAmbiguityIgnoresNonFiducialTargets",
   // Tag 1 is at (5,5,5), bestCameraToTarget = (4,2,3), so the estimated
   // robot pose lands at (1,3,2) in the field frame.
   wpi::math::Pose3d pose = estimatedPose.value().estimatedPose;
-  CHECK(1 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(.01));
-  CHECK(3 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(.01));
-  CHECK(2 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(1, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(3, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(2, .01));
 }
 
 TEST_CASE("PhotonPoseEstimatorTest ClosestToCameraHeightStrategy",
@@ -217,15 +216,14 @@ TEST_CASE("PhotonPoseEstimatorTest ClosestToCameraHeightStrategy",
 
   wpi::math::Pose3d pose = estimatedPose.value().estimatedPose;
 
-  CHECK(17 == Catch::Approx(wpi::units::unit_cast<double>(
-                                estimatedPose.value().timestamp))
-                  .margin(.02));
-  CHECK(4 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(.01));
-  CHECK(4 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(.01));
-  CHECK(0 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(estimatedPose.value().timestamp),
+             Catch::Matchers::WithinAbs(17, .02));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(4, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(4, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(0, .01));
   // Only the chosen target should be reported as used.
   CHECK(static_cast<size_t>(1) == estimatedPose.value().targetsUsed.size());
   CHECK(1 == estimatedPose.value().targetsUsed[0].GetFiducialId());
@@ -275,15 +273,14 @@ TEST_CASE("PhotonPoseEstimatorTest ClosestToReferencePoseStrategy",
   REQUIRE(estimatedPose);
   wpi::math::Pose3d pose = estimatedPose.value().estimatedPose;
 
-  CHECK(17 == Catch::Approx(wpi::units::unit_cast<double>(
-                                estimatedPose.value().timestamp))
-                  .margin(.01));
-  CHECK(1 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(.01));
-  CHECK(1.1 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(.01));
-  CHECK(.9 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(estimatedPose.value().timestamp),
+             Catch::Matchers::WithinAbs(17, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(1, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(1.1, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(.9, .01));
   // Only the chosen target should be reported as used.
   CHECK(static_cast<size_t>(1) == estimatedPose.value().targetsUsed.size());
   CHECK(0 == estimatedPose.value().targetsUsed[0].GetFiducialId());
@@ -367,15 +364,14 @@ TEST_CASE("PhotonPoseEstimatorTest ClosestToLastPose", "[poseest]") {
   REQUIRE(estimatedPose);
   pose = estimatedPose.value().estimatedPose;
 
-  CHECK(21.0 == Catch::Approx(wpi::units::unit_cast<double>(
-                                  estimatedPose.value().timestamp))
-                    .margin(.01));
-  CHECK(.9 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(.01));
-  CHECK(1.1 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(.01));
-  CHECK(1 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(estimatedPose.value().timestamp),
+             Catch::Matchers::WithinAbs(21.0, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(.9, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(1.1, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(1, .01));
   // Only the chosen target should be reported as used.
   CHECK(static_cast<size_t>(1) == estimatedPose.value().targetsUsed.size());
   CHECK(0 == estimatedPose.value().targetsUsed[0].GetFiducialId());
@@ -420,12 +416,15 @@ TEST_CASE("PhotonPoseEstimatorTest PnpDistanceTrigSolve", "[poseest]") {
   REQUIRE(estimatedPose);
   wpi::math::Pose3d pose = estimatedPose.value().estimatedPose;
 
-  CHECK(wpi::units::unit_cast<double>(realPose.X()) ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(.01));
-  CHECK(wpi::units::unit_cast<double>(realPose.Y()) ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(.01));
-  CHECK(wpi::units::unit_cast<double>(realPose.Z()) ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(
+                 wpi::units::unit_cast<double>(realPose.X()), .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(
+                 wpi::units::unit_cast<double>(realPose.Y()), .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(
+                 wpi::units::unit_cast<double>(realPose.Z()), .01));
   // PNP_DISTANCE_TRIG_SOLVE uses only the best target.
   CHECK(static_cast<size_t>(1) == estimatedPose.value().targetsUsed.size());
 
@@ -452,12 +451,15 @@ TEST_CASE("PhotonPoseEstimatorTest PnpDistanceTrigSolve", "[poseest]") {
   REQUIRE(estimatedPose);
   pose = estimatedPose.value().estimatedPose;
 
-  CHECK(wpi::units::unit_cast<double>(realPose.X()) ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(.01));
-  CHECK(wpi::units::unit_cast<double>(realPose.Y()) ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(.01));
-  CHECK(wpi::units::unit_cast<double>(realPose.Z()) ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(
+                 wpi::units::unit_cast<double>(realPose.X()), .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(
+                 wpi::units::unit_cast<double>(realPose.Y()), .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(
+                 wpi::units::unit_cast<double>(realPose.Z()), .01));
   // PNP_DISTANCE_TRIG_SOLVE uses only the best target.
   CHECK(static_cast<size_t>(1) == estimatedPose.value().targetsUsed.size());
 }
@@ -509,15 +511,14 @@ TEST_CASE("PhotonPoseEstimatorTest AverageBestPoses", "[poseest]") {
   REQUIRE(estimatedPose);
   wpi::math::Pose3d pose = estimatedPose.value().estimatedPose;
 
-  CHECK(15.0 == Catch::Approx(wpi::units::unit_cast<double>(
-                                  estimatedPose.value().timestamp))
-                    .margin(.01));
-  CHECK(2.15 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(.01));
-  CHECK(2.15 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(.01));
-  CHECK(2.15 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(estimatedPose.value().timestamp),
+             Catch::Matchers::WithinAbs(15.0, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(2.15, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(2.15, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(2.15, .01));
   // Only the three fiducial targets contributed; the non-fiducial fourth target
   // is excluded.
   CHECK(static_cast<size_t>(3) == estimatedPose.value().targetsUsed.size());
@@ -614,15 +615,14 @@ TEST_CASE("PhotonPoseEstimatorTest MultiTagOnCoprocFallback", "[poseest]") {
   wpi::math::Pose3d pose = estimatedPose.value().estimatedPose;
 
   // Make sure values match what we'd expect for the LOWEST_AMBIGUITY strategy
-  CHECK(11 == Catch::Approx(wpi::units::unit_cast<double>(
-                                estimatedPose.value().timestamp))
-                  .margin(.02));
-  CHECK(1 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(.01));
-  CHECK(3 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(.01));
-  CHECK(2 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(estimatedPose.value().timestamp),
+             Catch::Matchers::WithinAbs(11, .02));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(1, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(3, .01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(2, .01));
   // LOWEST_AMBIGUITY fallback should report only the single chosen target.
   CHECK(static_cast<size_t>(1) == estimatedPose.value().targetsUsed.size());
   CHECK(1 == estimatedPose.value().targetsUsed[0].GetFiducialId());
@@ -637,8 +637,9 @@ TEST_CASE("PhotonPoseEstimatorTest CopyResult", "[poseest]") {
 
   auto test2 = testResult;
 
-  CHECK(testResult.GetTimestamp().to<double>() ==
-        Catch::Approx(test2.GetTimestamp().to<double>()).margin(0.001));
+  CHECK_THAT(test2.GetTimestamp().to<double>(),
+             Catch::Matchers::WithinAbs(testResult.GetTimestamp().to<double>(),
+                                        0.001));
 }
 
 TEST_CASE("PhotonPoseEstimatorTest ConstrainedPnpEmptyCase", "[poseest]") {
@@ -716,12 +717,12 @@ TEST_CASE("PhotonPoseEstimatorTest ConstrainedPnpOneTag", "[poseest]") {
 
   wpi::math::Pose3d pose = estimatedPose.value().estimatedPose;
 
-  CHECK(3.58 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.X())).margin(0.01));
-  CHECK(4.13 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Y())).margin(0.01));
-  CHECK(0.0 ==
-        Catch::Approx(wpi::units::unit_cast<double>(pose.Z())).margin(0.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.X()),
+             Catch::Matchers::WithinAbs(3.58, 0.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Y()),
+             Catch::Matchers::WithinAbs(4.13, 0.01));
+  CHECK_THAT(wpi::units::unit_cast<double>(pose.Z()),
+             Catch::Matchers::WithinAbs(0.0, 0.01));
 
   CHECK(photon::CONSTRAINED_SOLVEPNP == estimatedPose.value().strategy);
 }

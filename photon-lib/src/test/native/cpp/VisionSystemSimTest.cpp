@@ -27,9 +27,9 @@
 #include <tuple>
 #include <vector>
 
-#include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators_all.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <wpi/fields/Field.hpp>
 #include <wpi/fields/FieldTag.hpp>
 #include <wpi/util/deprecated.hpp>
@@ -283,8 +283,8 @@ TEST_CASE_METHOD(VisionSystemSimTestWithParamsTest, "YawAngles",
 
   const auto result = camera.GetLatestResult();
   REQUIRE(result.HasTargets());
-  REQUIRE(param.to<double>() ==
-          Catch::Approx(result.GetBestTarget().GetYaw()).margin(0.25));
+  REQUIRE_THAT(result.GetBestTarget().GetYaw(),
+               Catch::Matchers::WithinAbs(param.to<double>(), 0.25));
 }
 
 TEST_CASE_METHOD(VisionSystemSimTestWithParamsTest, "PitchAngles",
@@ -317,8 +317,8 @@ TEST_CASE_METHOD(VisionSystemSimTestWithParamsTest, "PitchAngles",
 
   const auto result = camera.GetLatestResult();
   REQUIRE(result.HasTargets());
-  REQUIRE(param.to<double>() ==
-          Catch::Approx(result.GetBestTarget().GetPitch()).margin(0.25));
+  REQUIRE_THAT(result.GetBestTarget().GetPitch(),
+               Catch::Matchers::WithinAbs(param.to<double>(), 0.25));
 }
 
 TEST_CASE_METHOD(VisionSystemSimTestDistanceParamsTest, "DistanceCalc",
@@ -368,14 +368,13 @@ TEST_CASE_METHOD(VisionSystemSimTestDistanceParamsTest, "DistanceCalc",
   REQUIRE(res.HasTargets());
   photon::PhotonTrackedTarget target = res.GetBestTarget();
 
-  REQUIRE(0.0 == Catch::Approx(target.GetYaw()).margin(0.5));
+  REQUIRE_THAT(target.GetYaw(), Catch::Matchers::WithinAbs(0.0, 0.5));
 
   wpi::units::meter_t dist = photon::PhotonUtils::CalculateDistanceToTarget(
       robotToCamera.Z(), targetPose.Z(), -pitchParam,
       wpi::units::degree_t{target.GetPitch()});
-  REQUIRE(dist.to<double>() ==
-          Catch::Approx(distParam.convert<wpi::units::meters>().to<double>())
-              .margin(0.25));
+  REQUIRE_THAT(distParam.convert<wpi::units::meters>().to<double>(),
+               Catch::Matchers::WithinAbs(dist.to<double>(), 0.25));
 }
 
 TEST_CASE_METHOD(VisionSystemSimTest, "TestMultipleTargets", "[photonlib]") {
@@ -500,11 +499,14 @@ TEST_CASE_METHOD(VisionSystemSimTest, "TestPoseEstimation", "[photonlib]") {
       camEigen, distEigen, targets, layout, photon::kAprilTag16h5);
   REQUIRE(results);
   wpi::math::Pose3d pose = wpi::math::Pose3d{} + results->best;
-  REQUIRE(5 == Catch::Approx(pose.X().to<double>()).margin(0.01));
-  REQUIRE(1 == Catch::Approx(pose.Y().to<double>()).margin(0.01));
-  REQUIRE(0 == Catch::Approx(pose.Z().to<double>()).margin(0.01));
-  REQUIRE(wpi::units::degree_t{5}.convert<wpi::units::radians>().to<double>() ==
-          Catch::Approx(pose.Rotation().Z().to<double>()).margin(0.01));
+  REQUIRE_THAT(pose.X().to<double>(), Catch::Matchers::WithinAbs(5, 0.01));
+  REQUIRE_THAT(pose.Y().to<double>(), Catch::Matchers::WithinAbs(1, 0.01));
+  REQUIRE_THAT(pose.Z().to<double>(), Catch::Matchers::WithinAbs(0, 0.01));
+  REQUIRE_THAT(
+      pose.Rotation().Z().to<double>(),
+      Catch::Matchers::WithinAbs(
+          wpi::units::degree_t{5}.convert<wpi::units::radians>().to<double>(),
+          0.01));
 
   visionSysSim.AddVisionTargets(
       {photon::VisionTargetSim{tagList[1].pose, photon::kAprilTag16h5, 1}});
@@ -522,13 +524,16 @@ TEST_CASE_METHOD(VisionSystemSimTest, "TestPoseEstimation", "[photonlib]") {
       camEigen, distEigen, targets2, layout, photon::kAprilTag16h5);
   REQUIRE(results2);
   wpi::math::Pose3d pose2 = wpi::math::Pose3d{} + results2->best;
-  REQUIRE(robotPose.X().to<double>() ==
-          Catch::Approx(pose2.X().to<double>()).margin(0.01));
-  REQUIRE(robotPose.Y().to<double>() ==
-          Catch::Approx(pose2.Y().to<double>()).margin(0.01));
-  REQUIRE(0 == Catch::Approx(pose2.Z().to<double>()).margin(0.01));
-  REQUIRE(wpi::units::degree_t{5}.convert<wpi::units::radians>().to<double>() ==
-          Catch::Approx(pose2.Rotation().Z().to<double>()).margin(0.01));
+  REQUIRE_THAT(pose2.X().to<double>(),
+               Catch::Matchers::WithinAbs(robotPose.X().to<double>(), 0.01));
+  REQUIRE_THAT(pose2.Y().to<double>(),
+               Catch::Matchers::WithinAbs(robotPose.Y().to<double>(), 0.01));
+  REQUIRE_THAT(pose2.Z().to<double>(), Catch::Matchers::WithinAbs(0, 0.01));
+  REQUIRE_THAT(
+      pose2.Rotation().Z().to<double>(),
+      Catch::Matchers::WithinAbs(
+          wpi::units::degree_t{5}.convert<wpi::units::radians>().to<double>(),
+          0.01));
 }
 
 TEST_CASE_METHOD(VisionSystemSimTest, "TestPoseEstimationRotated",
@@ -588,12 +593,14 @@ TEST_CASE_METHOD(VisionSystemSimTest, "TestPoseEstimationRotated",
   REQUIRE(results);
   wpi::math::Pose3d pose = wpi::math::Pose3d{} + results->best;
   pose = pose.TransformBy(robotToCamera.Inverse());
-  REQUIRE(5 == Catch::Approx(pose.X().to<double>()).margin(0.01));
-  REQUIRE(1 == Catch::Approx(pose.Y().to<double>()).margin(0.01));
-  REQUIRE(0 == Catch::Approx(pose.Z().to<double>()).margin(0.01));
-  REQUIRE(
-      wpi::units::degree_t{-5}.convert<wpi::units::radians>().to<double>() ==
-      Catch::Approx(pose.Rotation().Z().to<double>()).margin(0.01));
+  REQUIRE_THAT(pose.X().to<double>(), Catch::Matchers::WithinAbs(5, 0.01));
+  REQUIRE_THAT(pose.Y().to<double>(), Catch::Matchers::WithinAbs(1, 0.01));
+  REQUIRE_THAT(pose.Z().to<double>(), Catch::Matchers::WithinAbs(0, 0.01));
+  REQUIRE_THAT(
+      pose.Rotation().Z().to<double>(),
+      Catch::Matchers::WithinAbs(
+          wpi::units::degree_t{-5}.convert<wpi::units::radians>().to<double>(),
+          0.01));
 
   visionSysSim.AddVisionTargets(
       {photon::VisionTargetSim{tagList[1].pose, photon::kAprilTag36h11, 1}});
@@ -612,14 +619,16 @@ TEST_CASE_METHOD(VisionSystemSimTest, "TestPoseEstimationRotated",
   REQUIRE(results2);
   wpi::math::Pose3d pose2 = wpi::math::Pose3d{} + results2->best;
   pose2 = pose2.TransformBy(robotToCamera.Inverse());
-  REQUIRE(robotPose.X().to<double>() ==
-          Catch::Approx(pose2.X().to<double>()).margin(0.01));
-  REQUIRE(robotPose.Y().to<double>() ==
-          Catch::Approx(pose2.Y().to<double>()).margin(0.01));
-  REQUIRE(0 == Catch::Approx(pose2.Z().to<double>()).margin(0.01));
-  REQUIRE(
-      wpi::units::degree_t{-5}.convert<wpi::units::radians>().to<double>() ==
-      Catch::Approx(pose2.Rotation().Z().to<double>()).margin(0.01));
+  REQUIRE_THAT(pose2.X().to<double>(),
+               Catch::Matchers::WithinAbs(robotPose.X().to<double>(), 0.01));
+  REQUIRE_THAT(pose2.Y().to<double>(),
+               Catch::Matchers::WithinAbs(robotPose.Y().to<double>(), 0.01));
+  REQUIRE_THAT(pose2.Z().to<double>(), Catch::Matchers::WithinAbs(0, 0.01));
+  REQUIRE_THAT(
+      pose2.Rotation().Z().to<double>(),
+      Catch::Matchers::WithinAbs(
+          wpi::units::degree_t{-5}.convert<wpi::units::radians>().to<double>(),
+          0.01));
 }
 
 TEST_CASE_METHOD(VisionSystemSimTest, "TestTagAmbiguity", "[photonlib]") {
