@@ -376,7 +376,7 @@ class LegacyConfigProvider extends ConfigProvider {
     }
 
     @Override
-    public boolean saveUploadedAprilTagFieldLayout(Path uploadPath) {
+    public boolean saveUploadedFieldLayout(Path uploadPath) {
         return FileUtils.replaceFile(uploadPath, this.getAprilTagFieldLayoutFile());
     }
 

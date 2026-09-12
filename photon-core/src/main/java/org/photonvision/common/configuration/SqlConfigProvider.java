@@ -59,7 +59,7 @@ public class SqlConfigProvider extends ConfigProvider {
         static final String NETWORK_CONFIG = "networkConfig";
         static final String HARDWARE_CONFIG = "hardwareConfig";
         static final String HARDWARE_SETTINGS = "hardwareSettings";
-        static final String ATFL_CONFIG_FILE = "apriltagFieldLayout";
+        static final String FIELD_CONFIG_FILE = "fieldLayout";
         static final String NEURAL_NETWORK_PROPERTIES = "neuralNetworkProperties";
     }
 
@@ -283,17 +283,17 @@ public class SqlConfigProvider extends ConfigProvider {
         return null;
     }
 
-    private Field atflDefault() {
-        Field atfl;
+    private Field fieldDefault() {
+        Field field;
         try {
-            atfl = Field.loadField(Fields.DEFAULT_FIELD);
+            field = Field.loadField(Fields.DEFAULT_FIELD);
             logger.info("Loaded " + Fields.DEFAULT_FIELD.toString() + " field");
         } catch (UncheckedIOException e) {
             logger.error("Error loading WPILib field", e);
             logger.info("Creating an empty field");
-            atfl = new Field("", "", "", null, 0, 0, "", null);
+            field = new Field("", "", "", null, 0, 0, "", null);
         }
-        return atfl;
+        return field;
     }
 
     /**
@@ -303,18 +303,19 @@ public class SqlConfigProvider extends ConfigProvider {
      * JSON to the newer {@link Field} format before deserializing. If a migration happened the
      * upgraded JSON is written back to the database so the stored data self-upgrades.
      */
-    private Field loadAtfl(Connection conn) {
-        String configString = getOneConfigFile(conn, GlobalKeys.ATFL_CONFIG_FILE);
+    private Field loadField(Connection conn) {
+        // This stays as the old config string, as that's how we'll try and find it in the database
+        String configString = getOneConfigFile(conn, "apriltagFieldLayout");
         if (configString.isBlank()) {
             logger.debug("No " + Field.class.getSimpleName() + " in database");
-            return atflDefault();
+            return fieldDefault();
         }
 
         try {
             String migrated = FieldLayoutMigration.migrateFieldLayoutJson(configString);
             if (!migrated.equals(configString)) {
                 logger.info("Migrated legacy AprilTagFieldLayout to Field format, persisting to database");
-                if (!saveOneFile(GlobalKeys.ATFL_CONFIG_FILE, migrated)) {
+                if (!saveOneFile(GlobalKeys.FIELD_CONFIG_FILE, migrated)) {
                     logger.error("Could not persist migrated field layout to database!");
                 }
             }
@@ -324,7 +325,7 @@ public class SqlConfigProvider extends ConfigProvider {
         }
 
         // either the config entry was corrupt or Jsonb threw an exception
-        return atflDefault();
+        return fieldDefault();
     }
 
     @Override
@@ -349,7 +350,7 @@ public class SqlConfigProvider extends ConfigProvider {
                             GlobalKeys.NEURAL_NETWORK_PROPERTIES,
                             NeuralNetworkModelsSettings.class,
                             NeuralNetworkModelsSettings::new);
-            var atfl = loadAtfl(conn);
+            var field = loadField(conn);
             var cams = loadCameraConfigs(conn);
 
             try {
@@ -360,7 +361,7 @@ public class SqlConfigProvider extends ConfigProvider {
 
             this.config =
                     new PhotonConfiguration(
-                            hardwareConfig, hardwareSettings, networkConfig, atfl, nnProps, cams);
+                            hardwareConfig, hardwareSettings, networkConfig, field, nnProps, cams);
         }
     }
 
@@ -544,9 +545,9 @@ public class SqlConfigProvider extends ConfigProvider {
     /**
      * MIGRATION: 2026
      *
-     * <p>When we migrate the atfl, we get the result as a string. Everything else has a path though,
-     * so we need this overload to maintain the prior behavior. To remove this migration, we'll want
-     * to delete this overload then make the other function accept a path again.
+     * <p>When we migrate the field layout, we get the result as a string. Everything else has a path
+     * though, so we need this overload to maintain the prior behavior. To remove this migration,
+     * we'll want to delete this overload then make the other function accept a path again.
      */
     private boolean saveOneFile(String fname, Path path) {
         try {
@@ -616,9 +617,9 @@ public class SqlConfigProvider extends ConfigProvider {
     }
 
     @Override
-    public boolean saveUploadedAprilTagFieldLayout(Path uploadPath) {
+    public boolean saveUploadedFieldLayout(Path uploadPath) {
         skipSavingAPRTG = true;
-        return saveOneFile(GlobalKeys.ATFL_CONFIG_FILE, uploadPath);
+        return saveOneFile(GlobalKeys.FIELD_CONFIG_FILE, uploadPath);
     }
 
     @Override

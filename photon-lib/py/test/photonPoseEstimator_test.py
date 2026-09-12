@@ -41,7 +41,7 @@ class PhotonCameraInjector(PhotonCamera):
         return self.result
 
 
-def fakeAprilTagFieldLayout() -> Field:
+def fakeFieldLayout() -> Field:
     tagList = []
     tagPoses = (
         Pose3d(3, 3, 3, Rotation3d()),
@@ -57,7 +57,7 @@ def fakeAprilTagFieldLayout() -> Field:
 
 
 def test_lowestAmbiguityStrategy():
-    aprilTags = fakeAprilTagFieldLayout()
+    aprilTags = fakeFieldLayout()
     cameraOne = PhotonCameraInjector()
     cameraOne.result = PhotonPipelineResult(
         int(11e9),
@@ -154,7 +154,7 @@ def test_lowestAmbiguityStrategy():
 
 
 def test_pnpDistanceTrigSolve():
-    aprilTags = fakeAprilTagFieldLayout()
+    aprilTags = fakeFieldLayout()
     cameraOne = PhotonCameraInjector()
     latencySecs: wpimath.units.seconds = 1
     fakeTimestampSecs: wpimath.units.seconds = 9 + latencySecs

@@ -22,7 +22,7 @@ export interface WebsocketSettingsUpdate {
   general: Required<GeneralSettings>;
   lighting: Required<LightingSettings>;
   networkSettings: NetworkSettings;
-  atfl: Field;
+  field: Field;
 }
 
 export interface WebsocketNumberPair {

@@ -172,8 +172,8 @@ export const useSettingsStore = defineStore("settings", {
       this.lighting = data.lighting;
       this.network = data.networkSettings;
       this.currentFieldLayout = {
-        "field-dimensions": data.atfl["field-dimensions"],
-        "field-tags": data.atfl["field-tags"]
+        "field-dimensions": data.field["field-dimensions"],
+        "field-tags": data.field["field-tags"]
       };
     },
     updateGeneralSettings(payload: Required<ConfigurableNetworkSettings>) {

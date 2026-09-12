@@ -26,15 +26,15 @@ public class UIProgramSettings {
             UINetConfig networkSettings,
             UILightingConfig lighting,
             UIGeneralSettings general,
-            Field atfl) {
+            Field field) {
         this.networkSettings = networkSettings;
         this.lighting = lighting;
         this.general = general;
-        this.atfl = atfl;
+        this.field = field;
     }
 
     public UINetConfig networkSettings;
     public UILightingConfig lighting;
     public UIGeneralSettings general;
-    public Field atfl;
+    public Field field;
 }

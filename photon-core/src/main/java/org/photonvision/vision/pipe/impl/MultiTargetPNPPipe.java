@@ -62,7 +62,7 @@ public class MultiTargetPNPPipe
         var tagIDsUsed = new ArrayList<Short>();
         for (var target : targetList) {
             int id = target.getFiducialId();
-            if (params.atfl().getTagPose(id).isPresent()) tagIDsUsed.add((short) id);
+            if (params.field().getTagPose(id).isPresent()) tagIDsUsed.add((short) id);
         }
 
         // Only run with multiple targets
@@ -75,7 +75,7 @@ public class MultiTargetPNPPipe
                         params.cameraCoefficients().cameraIntrinsics.getAsWpilibMat(),
                         params.cameraCoefficients().distCoeffs.getAsWpilibMat(),
                         TrackedTarget.simpleFromTrackedTargets(targetList),
-                        params.atfl(),
+                        params.field(),
                         params.targetModel());
 
         if (estimatedPose.isPresent()) {
@@ -89,5 +89,5 @@ public class MultiTargetPNPPipe
     public void release() {}
 
     public static record MultiTargetPNPPipeParams(
-            CameraCalibrationCoefficients cameraCoefficients, Field atfl, TargetModel targetModel) {}
+            CameraCalibrationCoefficients cameraCoefficients, Field field, TargetModel targetModel) {}
 }

@@ -56,7 +56,7 @@ public class NetworkTablesManager {
     private final String kRootTableName = "/photonvision";
     // The coprocessors table should only be used for operations/data related to MAC address
     public final String kCoprocTableName = "coprocessors";
-    private final String kFieldLayoutName = "apriltag_field_layout";
+    private final String kFieldLayoutName = "field_layout";
     public final NetworkTable kRootTable = ntInstance.getTable(kRootTableName);
     public final NetworkTable kCoprocTable = kRootTable.getSubTable(kCoprocTableName);
 
@@ -191,11 +191,11 @@ public class NetworkTablesManager {
     }
 
     private void onFieldLayoutChanged(NetworkTableEvent event) {
-        var atfl_json = event.valueData.value.getString();
+        var field_json = event.valueData.value.getString();
         try {
             System.out.println("Got new field layout!");
-            var atfl = Jsonb.instance().type(Field.class).fromJson(atfl_json);
-            ConfigManager.getInstance().getConfig().setApriltagFieldLayout(atfl);
+            var field = Jsonb.instance().type(Field.class).fromJson(field_json);
+            ConfigManager.getInstance().getConfig().setFieldLayout(field);
             ConfigManager.getInstance().requestSave();
             DataChangeService.getInstance()
                     .publishEvent(
@@ -203,8 +203,8 @@ public class NetworkTablesManager {
                                     "fullsettings",
                                     UIPhotonConfiguration.programStateToUi(ConfigManager.getInstance().getConfig())));
         } catch (IllegalStateException | JsonException e) {
-            logger.error("Error deserializing atfl!");
-            logger.error(atfl_json);
+            logger.error("Error deserializing field layout!");
+            logger.error(field_json);
         }
     }
 

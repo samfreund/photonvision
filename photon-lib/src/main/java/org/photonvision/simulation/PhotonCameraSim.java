@@ -624,8 +624,8 @@ public class PhotonCameraSim implements AutoCloseable {
 
         // calculate multitag results
         Optional<MultiTargetPNPResult> multitagResult = Optional.empty();
-        // TODO: Implement ATFL subscribing in backend
-        // var tagLayout = cam.getAprilTagFieldLayout();
+        // TODO: Implement field subscribing in backend
+        // var tagLayout = cam.getFieldLayout();
         var visibleLayoutTags = VisionEstimation.getVisibleLayoutTags(detectableTgts, tagLayout);
         if (visibleLayoutTags.size() > 1) {
             List<Short> usedIDs =
