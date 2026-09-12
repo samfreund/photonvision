@@ -110,8 +110,8 @@ public class FileSaveFrameConsumerTest {
             DriverStationSim.setEventName(eventName);
             DriverStationBackend.refreshData();
 
-            // ALSO publish to NetworkTables FMSInfo table (what FileSaveFrameConsumer reads)
-            NetworkTable fmsTable = inst.getTable("FMSInfo");
+            // ALSO publish to NetworkTables DriverStation table (what FileSaveFrameConsumer reads)
+            NetworkTable fmsTable = inst.getTable("DriverStation");
             fmsTable.getStringTopic("EventName").publish().accept(eventName);
             fmsTable.getIntegerTopic("MatchNumber").publish().accept(matchNumber);
             fmsTable.getIntegerTopic("MatchType").publish().accept(matchType.ordinal());
