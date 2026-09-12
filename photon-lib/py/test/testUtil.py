@@ -14,8 +14,8 @@ class PipelineTimestamps:
         self,
         *,
         captureTimestampNanos: int,
-        pipelineLatencyNanos=2_000_000,
-        receiveLatencyNanos=1_000_000,
+        pipelineLatencyNanos=2e6,
+        receiveLatencyNanos=1e6,
     ):
         if captureTimestampNanos < 0:
             raise InvalidTestDataException("captureTimestampNanos cannot be negative")

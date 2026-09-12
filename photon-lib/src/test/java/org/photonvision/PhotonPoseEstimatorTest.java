@@ -791,7 +791,7 @@ class PhotonPoseEstimatorTest {
         camera.result =
                 new PhotonPipelineResult(
                         0,
-                        11L * 1_000_000_000,
+                        11_000_000_000L,
                         1_100_000_000,
                         1024,
                         List.of(

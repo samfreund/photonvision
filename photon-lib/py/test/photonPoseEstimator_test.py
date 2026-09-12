@@ -60,7 +60,7 @@ def test_lowestAmbiguityStrategy():
     aprilTags = fakeAprilTagFieldLayout()
     cameraOne = PhotonCameraInjector()
     cameraOne.result = PhotonPipelineResult(
-        int(11 * 1e9),
+        int(11e9),
         [
             PhotonTrackedTarget(
                 3.0,
@@ -130,7 +130,7 @@ def test_lowestAmbiguityStrategy():
             ),
         ],
         metadata=PhotonPipelineMetadata(
-            0, int(2 * 1e6), 0
+            0, int(2e6), 0
         ),  # 2ms latency in nanoseconds
         multitagResult=None,
     )
@@ -242,7 +242,7 @@ def test_pnpDistanceTrigSolve():
 def test_multiTagOnCoprocStrategy():
     cameraOne = PhotonCameraInjector()
     cameraOne.result = PhotonPipelineResult(
-        int(11 * 1e9),
+        int(11e9),
         # There needs to be at least one target present for pose estimation to work
         # Doesn't matter which/how many targets for this test
         [
@@ -270,7 +270,7 @@ def test_multiTagOnCoprocStrategy():
             )
         ],
         metadata=PhotonPipelineMetadata(
-            0, int(2 * 1e6), 0
+            0, int(2e6), 0
         ),  # 2ms latency in nanoseconds
         multitagResult=MultiTargetPNPResult(
             PnpResult(Transform3d(1, 3, 2, Rotation3d()))
