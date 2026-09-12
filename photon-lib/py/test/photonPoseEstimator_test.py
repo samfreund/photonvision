@@ -129,9 +129,7 @@ def test_lowestAmbiguityStrategy():
                 0.4,
             ),
         ],
-        metadata=PhotonPipelineMetadata(
-            0, int(2e6), 0
-        ),  # 2ms latency in nanoseconds
+        metadata=PhotonPipelineMetadata(0, int(2e6), 0),  # 2ms latency in nanoseconds
         multitagResult=None,
     )
 
@@ -269,9 +267,7 @@ def test_multiTagOnCoprocStrategy():
                 0.7,
             )
         ],
-        metadata=PhotonPipelineMetadata(
-            0, int(2e6), 0
-        ),  # 2ms latency in nanoseconds
+        metadata=PhotonPipelineMetadata(0, int(2e6), 0),  # 2ms latency in nanoseconds
         multitagResult=MultiTargetPNPResult(
             PnpResult(Transform3d(1, 3, 2, Rotation3d()))
         ),
