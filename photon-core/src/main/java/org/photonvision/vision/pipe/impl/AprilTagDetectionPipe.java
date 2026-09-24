@@ -68,6 +68,26 @@ public class AprilTagDetectionPipe
         super.setParams(newParams);
     }
 
+    /**
+     * Applies a new detector configuration (e.g. quad decimate) without the family re-registration
+     * cost incurred by {@link #setParams}. Intended for per-detection adjustments such as different
+     * decimation per ML ROI; the quad threshold parameters and tag family are left untouched.
+     */
+    public void setConfig(AprilTagDetector.Config config) {
+        if (m_detector == null) {
+            throw new RuntimeException("Apriltag detector was released!");
+        }
+
+        m_detector.setConfig(config);
+
+        // Keep the params record consistent so a later setParams() call with the previous
+        // record detects the difference and re-applies it instead of silently no-op'ing.
+        if (this.params != null) {
+            this.params =
+                    new AprilTagDetectionPipeParams(this.params.family(), config, this.params.quadParams());
+        }
+    }
+
     @Override
     public void release() {
         m_detector.close();

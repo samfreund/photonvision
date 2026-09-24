@@ -76,6 +76,8 @@ public class AprilTagPipeline extends CVPipeline<CVPipelineResult, AprilTagPipel
     private final Collect2dTargetsPipe collect2dMLROIsPipe = new Collect2dTargetsPipe();
 
     private static final FrameThresholdType PROCESSING_TYPE = FrameThresholdType.GREYSCALE;
+    private static final int DECIMATE_2_THRESHOLD = 320 * 320;
+    private static final int DECIMATE_3_THRESHOLD = 640 * 640;
 
     public AprilTagPipeline() {
         super(PROCESSING_TYPE);
@@ -199,41 +201,61 @@ public class AprilTagPipeline extends CVPipeline<CVPipelineResult, AprilTagPipel
             sumPipeNanosElapsed += odResults.nanosElapsed;
             mlDetections = odResults.output;
             var inputMat = frame.processedImage.getMat();
-            for (var result : mlDetections) {
-                var paddedResult = padRectPipe.run(result.bbox().boundingRect());
-                sumPipeNanosElapsed += paddedResult.nanosElapsed;
+            var config = aprilTagDetectionPipe.getParams().detectorParams();
+            float defaultDecimate = settings.decimate;
+            try {
+                for (var result : mlDetections) {
+                    var paddedResult = padRectPipe.run(result.bbox().boundingRect());
+                    sumPipeNanosElapsed += paddedResult.nanosElapsed;
 
-                cropPipe.setParams(new CropPipe.CropPipeParams(paddedResult.output, settings));
-                var cropped = cropPipe.run(frame.processedImage);
-                sumPipeNanosElapsed += cropped.nanosElapsed;
+                    cropPipe.setParams(new CropPipe.CropPipeParams(paddedResult.output, settings));
+                    var cropped = cropPipe.run(frame.processedImage);
+                    sumPipeNanosElapsed += cropped.nanosElapsed;
 
-                CVPipeResult<List<AprilTagDetection>> tagDetectionPipeResult =
-                        aprilTagDetectionPipe.run(cropped.output);
-                sumPipeNanosElapsed += tagDetectionPipeResult.nanosElapsed;
-
-                var cropRect = cropPipe.effectiveCrop(inputMat.cols(), inputMat.rows());
-                double offsetX = cropRect != null ? cropRect.x : 0;
-                double offsetY = cropRect != null ? cropRect.y : 0;
-                for (var tagDetection : tagDetectionPipeResult.output) {
-                    var corners = tagDetection.getCorners();
-                    var newCorners = new double[8];
-                    for (var i = 0; i < corners.length; i += 2) {
-                        newCorners[i] = corners[i] + offsetX;
-                        newCorners[i + 1] = corners[i + 1] + offsetY;
+                    if (paddedResult.output.width * paddedResult.output.height >= DECIMATE_3_THRESHOLD) {
+                        config.quadDecimate = 3;
+                    } else if (paddedResult.output.width * paddedResult.output.height
+                            >= DECIMATE_2_THRESHOLD) {
+                        config.quadDecimate = 2;
+                    } else {
+                        config.quadDecimate = defaultDecimate;
                     }
 
-                    detections.add(
-                            new AprilTagDetection(
-                                    tagDetection.getFamily(),
-                                    tagDetection.getId(),
-                                    tagDetection.getHamming(),
-                                    tagDetection.getDecisionMargin(),
-                                    tagDetection.getHomography(),
-                                    tagDetection.getCenterX() + offsetX,
-                                    tagDetection.getCenterY() + offsetY,
-                                    newCorners));
-                    mltagNoneFound = false;
+                    aprilTagDetectionPipe.setConfig(config);
+
+                    CVPipeResult<List<AprilTagDetection>> tagDetectionPipeResult =
+                            aprilTagDetectionPipe.run(cropped.output);
+                    sumPipeNanosElapsed += tagDetectionPipeResult.nanosElapsed;
+
+                    var cropRect = cropPipe.effectiveCrop(inputMat.cols(), inputMat.rows());
+                    double offsetX = cropRect != null ? cropRect.x : 0;
+                    double offsetY = cropRect != null ? cropRect.y : 0;
+                    for (var tagDetection : tagDetectionPipeResult.output) {
+                        var corners = tagDetection.getCorners();
+                        var newCorners = new double[8];
+                        for (var i = 0; i < corners.length; i += 2) {
+                            newCorners[i] = corners[i] + offsetX;
+                            newCorners[i + 1] = corners[i + 1] + offsetY;
+                        }
+
+                        detections.add(
+                                new AprilTagDetection(
+                                        tagDetection.getFamily(),
+                                        tagDetection.getId(),
+                                        tagDetection.getHamming(),
+                                        tagDetection.getDecisionMargin(),
+                                        tagDetection.getHomography(),
+                                        tagDetection.getCenterX() + offsetX,
+                                        tagDetection.getCenterY() + offsetY,
+                                        newCorners));
+                        mltagNoneFound = false;
+                    }
                 }
+            } finally {
+                // Restore the default decimate even if detection throws mid-loop; otherwise the
+                // mutated value would be captured as the "default" on the next frame.
+                config.quadDecimate = defaultDecimate;
+                aprilTagDetectionPipe.setConfig(config);
             }
         }
 
