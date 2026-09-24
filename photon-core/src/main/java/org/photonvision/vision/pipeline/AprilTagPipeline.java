@@ -76,8 +76,8 @@ public class AprilTagPipeline extends CVPipeline<CVPipelineResult, AprilTagPipel
     private final Collect2dTargetsPipe collect2dMLROIsPipe = new Collect2dTargetsPipe();
 
     private static final FrameThresholdType PROCESSING_TYPE = FrameThresholdType.GREYSCALE;
-    private static final int DECIMATE_2_THRESHOLD = 320 * 320;
-    private static final int DECIMATE_3_THRESHOLD = 640 * 640;
+    private static final int DECIMATE_3_THRESHOLD = 160 * 160;
+    private static final int DECIMATE_6_THRESHOLD = 320 * 320;
 
     public AprilTagPipeline() {
         super(PROCESSING_TYPE);
@@ -212,11 +212,11 @@ public class AprilTagPipeline extends CVPipeline<CVPipelineResult, AprilTagPipel
                     var cropped = cropPipe.run(frame.processedImage);
                     sumPipeNanosElapsed += cropped.nanosElapsed;
 
-                    if (paddedResult.output.width * paddedResult.output.height >= DECIMATE_3_THRESHOLD) {
-                        config.quadDecimate = 3;
+                    if (paddedResult.output.width * paddedResult.output.height >= DECIMATE_6_THRESHOLD) {
+                        config.quadDecimate = 6;
                     } else if (paddedResult.output.width * paddedResult.output.height
-                            >= DECIMATE_2_THRESHOLD) {
-                        config.quadDecimate = 2;
+                            >= DECIMATE_3_THRESHOLD) {
+                        config.quadDecimate = 3;
                     } else {
                         config.quadDecimate = defaultDecimate;
                     }
