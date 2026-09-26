@@ -25,6 +25,7 @@
 package org.photonvision;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -400,6 +401,54 @@ class PhotonCameraTest {
             camera.getAllUnreadResults();
             // THEN the camera will not be connected
             assertTrue(camera.isConnected());
+        }
+    }
+
+    @Test
+    @Order(2) // Alerts can't be reset, so this runs after testAlerts
+    public void testStaleTimestampAlert() throws InterruptedException {
+        var cameraName = "staleTsCam";
+        var cameraPath = "/photonvision/" + cameraName;
+
+        var camera = new PhotonCamera(inst, cameraName);
+
+        try (PhotonCameraSim sim = new PhotonCameraSim(camera)) {
+            // GIVEN a result with a healthy pong but a timestamp 10 seconds in the past
+            long nowNanos = (long) (Timer.getMonotonicTimestamp() * 1e9);
+            PhotonPipelineResult staleResult =
+                    new PhotonPipelineResult(
+                            new PhotonPipelineMetadata(
+                                    nowNanos - 10L * 1000000000,
+                                    nowNanos,
+                                    3,
+                                    1L * 1000000000 // 1 second -> ns since last pong
+                                    ),
+                            List.of(),
+                            Optional.empty());
+
+            // Loop to hit cases past first iteration, and let NT loopback deliver the first frame
+            for (int i = 0; i < 10; i++) {
+                // WHEN we update the camera
+                sim.submitProcessedFrame(staleResult);
+                camera.getAllUnreadResults();
+
+                String[] alertsText =
+                        Arrays.stream(AlertSim.getAll())
+                                .filter(it -> it.isActive())
+                                .map(it -> it.text)
+                                .toArray(String[]::new);
+
+                // THEN this camera's alert string looks like a stale timestamp warning
+                // (other tests leave their own alerts active -- filter by this camera's path)
+                long staleCount =
+                        Arrays.stream(alertsText)
+                                .filter(it -> it.contains(cameraPath))
+                                .filter(it -> it.contains("away from the local clock"))
+                                .count();
+                assertEquals(1, staleCount);
+
+                Thread.sleep(20);
+            }
         }
     }
 }

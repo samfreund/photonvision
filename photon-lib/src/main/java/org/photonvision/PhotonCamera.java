@@ -112,6 +112,7 @@ public class PhotonCamera implements AutoCloseable {
 
     double prevTimeSyncWarnTime = 0;
     private static final double WARN_DEBOUNCE_SEC = 5;
+    private static final double MAX_TIMESTAMP_ERROR_SEC = 5;
 
     private final Alert disconnectAlert;
     private final Alert timesyncAlert;
@@ -312,13 +313,26 @@ public class PhotonCamera implements AutoCloseable {
     }
 
     private void checkTimeSyncOrWarn(PhotonPipelineResult result) {
-        if (result.metadata.timeSinceLastPong > 5L * 1000000000L) {
+        double timestampError = Math.abs(Timer.getMonotonicTimestamp() - result.getTimestampSeconds());
+        if (result.metadata.timeSinceLastPong > 5L * 1000000000L
+                || timestampError > MAX_TIMESTAMP_ERROR_SEC) {
+            String reason;
+            if (result.metadata.timeSinceLastPong > 5L * 1000000000L) {
+                reason =
+                        "It's been "
+                                + String.format("%.2f", result.metadata.timeSinceLastPong / 1e9)
+                                + "s since the coprocessor last heard a pong.";
+            } else {
+                reason =
+                        "The frame timestamp is "
+                                + String.format("%.2f", timestampError)
+                                + "s away from the local clock.";
+            }
             String warningText =
                     "PhotonVision coprocessor at path "
                             + path
-                            + " is not connected to the TimeSyncServer? It's been "
-                            + String.format("%.2f", result.metadata.timeSinceLastPong / 1e9)
-                            + "s since the coprocessor last heard a pong.";
+                            + " is not connected to the TimeSyncServer? "
+                            + reason;
 
             timesyncAlert.setText(warningText);
             timesyncAlert.set(true);

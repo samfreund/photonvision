@@ -37,6 +37,7 @@
 #include <wpi/system/RobotController.hpp>
 #include <wpi/system/Timer.hpp>
 #include <wpi/system/WPILibVersion.hpp>
+#include <wpi/units/math.hpp>
 #include <wpi/util/UsageReporting.hpp>
 #include <wpi/util/json.hpp>
 #include <wpi/util/string.hpp>
@@ -45,6 +46,7 @@
 #include "photon/dataflow/structures/Packet.h"
 
 static constexpr wpi::units::second_t WARN_DEBOUNCE_SEC = 5_s;
+static constexpr double MAX_TIMESTAMP_ERROR_SEC = 5.0;
 static constexpr wpi::units::second_t HEARTBEAT_DEBOUNCE_SEC = 500_ms;
 
 // bit of a hack -- start a TimeSync server on port 5810 (hard-coded). We want
@@ -163,9 +165,9 @@ PhotonPipelineResult PhotonCamera::GetLatestResult() {
   // Create the new result;
   PhotonPipelineResult result = packet.Unpack<PhotonPipelineResult>();
 
-  CheckTimeSyncOrWarn(result);
-
   result.SetReceiveTimestamp(now);
+
+  CheckTimeSyncOrWarn(result);
 
   return result;
 }
@@ -196,12 +198,12 @@ std::vector<PhotonPipelineResult> PhotonCamera::GetAllUnreadResults() {
     photon::Packet packet{value.value};
     auto result = packet.Unpack<PhotonPipelineResult>();
 
-    CheckTimeSyncOrWarn(result);
-
     // TODO: NT4 timestamps are still not to be trusted. But it's the best we
     // can do until we can make time sync more reliable.
     result.SetReceiveTimestamp(wpi::units::nanosecond_t(value.time) -
                                result.GetLatency());
+
+    CheckTimeSyncOrWarn(result);
 
     ret.push_back(result);
   }
@@ -214,12 +216,24 @@ void PhotonCamera::UpdateDisconnectAlert() {
 }
 
 void PhotonCamera::CheckTimeSyncOrWarn(photon::PhotonPipelineResult& result) {
-  if (result.metadata.timeSinceLastPong > INT64_C(5) * 1000000000L) {
+  double timestampError =
+      wpi::units::math::fabs(wpi::Timer::GetMonotonicTimestamp() -
+                             result.GetTimestamp())
+          .to<double>();
+  if (result.metadata.timeSinceLastPong > INT64_C(5) * 1000000000L ||
+      timestampError > MAX_TIMESTAMP_ERROR_SEC) {
+    std::string reason;
+    if (result.metadata.timeSinceLastPong > INT64_C(5) * 1000000000L) {
+      reason = "It's been " +
+               std::to_string(result.metadata.timeSinceLastPong / 1e9) +
+               "s since the coprocessor last heard a pong.";
+    } else {
+      reason = "The frame timestamp is " +
+               std::to_string(timestampError) + "s away from the local clock.";
+    }
     std::string warningText =
         "PhotonVision coprocessor at path " + path +
-        " is not connected to the TimeSyncServer? It's been " +
-        std::to_string(result.metadata.timeSinceLastPong / 1e9) +
-        "s since the coprocessor last heard a pong.";
+        " is not connected to the TimeSyncServer? " + reason;
 
     timesyncAlert.SetText(warningText);
     timesyncAlert.Set(true);
