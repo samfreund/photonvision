@@ -109,7 +109,7 @@ To use simulated object detection, you must provide an objDetClassId (zero-index
       // Confidence, between 0 and 1.
       final float conf = 0.67f;
       // 6 inch diameter ball
-      final TargetModel ballModel = new TargetModel(Units.inchesToMeters(6));
+      final TargetModel ballModel = new TargetModel(UnitConversions.inchesToMeters(6));
       final var ballTargetSim = new VisionTargetSim(targetPose, ballModel, classId, conf);
 
       // Add this vision target to the vision system simulation to make it visible
